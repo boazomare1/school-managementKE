@@ -1,0 +1,1797 @@
+{
+  "info": {
+    "name": "School Management System API",
+    "description": "Complete API collection for School Management System with JWT authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@school.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"role\": \"STUDENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('jwt_token', response.data.token);",
+                  "        pm.collectionVariables.set('refresh_token', response.data.refreshToken);",
+                  "        console.log('JWT Token saved:', response.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Student Management",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management (Admin Only)",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"Name\",\n  \"email\": \"updated@school.com\",\n  \"phoneNumber\": \"+1234567890\",\n  \"address\": \"123 Main St, City, State\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        },
+        {
+          "name": "Application Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "info"]
+            }
+          }
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Different User Roles",
+      "item": [
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('admin_jwt_token', response.data.token);",
+                  "        console.log('Admin JWT Token saved');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('teacher_jwt_token', response.data.token);",
+                  "        console.log('Teacher JWT Token saved');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"teacher1\",\n  \"password\": \"teacher123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('student_jwt_token', response.data.token);",
+                  "        console.log('Student JWT Token saved');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"student1\",\n  \"password\": \"student123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as Parent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.collectionVariables.set('parent_jwt_token', response.data.token);",
+                  "        console.log('Parent JWT Token saved');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usernameOrEmail\": \"parent1\",\n  \"password\": \"parent123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Academic Management",
+      "item": [
+        {
+          "name": "Create School",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Springfield High School\",\n  \"address\": \"123 Education Street, Springfield, IL 62701\",\n  \"phone\": \"+1-555-0123\",\n  \"email\": \"info@springfieldhigh.edu\",\n  \"website\": \"www.springfieldhigh.edu\",\n  \"registrationNumber\": \"SCH-2024-001\",\n  \"principalName\": \"Dr. Sarah Johnson\",\n  \"principalPhone\": \"+1-555-0124\",\n  \"principalEmail\": \"principal@springfieldhigh.edu\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"]
+            }
+          }
+        },
+        {
+          "name": "Get All Schools",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance Module",
+      "item": [
+        {
+          "name": "Create Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tuition Fee - Grade 10\",\n  \"description\": \"Annual tuition fee for Grade 10 students\",\n  \"amount\": 50000.00,\n  \"feeType\": \"Tuition\",\n  \"paymentFrequency\": \"Annual\",\n  \"isMandatory\": true,\n  \"isActive\": true,\n  \"effectiveFrom\": \"2025-01-01T00:00:00\",\n  \"effectiveTo\": \"2025-12-31T23:59:59\",\n  \"schoolId\": 1,\n  \"academicYearId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures"]
+            }
+          }
+        },
+        {
+          "name": "Get All Fee Structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures?schoolId=1&academicYearId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Process Cash Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 50000.00,\n  \"paymentMethod\": \"CASH\",\n  \"paymentNotes\": \"Cash payment received at school office\",\n  \"transactionId\": \"CASH-001\",\n  \"externalReference\": \"OFFICE-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Process M-Pesa Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 50000.00,\n  \"paymentMethod\": \"M_PESA\",\n  \"phoneNumber\": \"+254712345678\",\n  \"accountReference\": \"SCHOOL-FEE-001\",\n  \"transactionDescription\": \"School fee payment\",\n  \"paymentNotes\": \"M-Pesa payment via STK Push\",\n  \"transactionId\": \"MPESA-001\",\n  \"externalReference\": \"STK-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments"]
+            }
+          }
+        }
+      ]
+      },
+      {
+        "name": "Student Lifecycle Management",
+        "item": [
+          {
+            "name": "Enroll Student in Grade",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentId\": 1,\n  \"classId\": 1,\n  \"academicYearId\": 1,\n  \"subjectIds\": [1, 2, 3],\n  \"enrollmentDate\": \"2024-01-15T09:00:00\",\n  \"notes\": \"Regular enrollment\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/enroll",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "enroll"]
+              }
+            }
+          },
+          {
+            "name": "Get Student Enrollments",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/enrollments/student/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "enrollments", "student", "1"]
+              }
+            }
+          },
+          {
+            "name": "Mark Attendance",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentId\": 1,\n  \"classId\": 1,\n  \"subjectId\": 1,\n  \"attendanceDate\": \"2024-01-15\",\n  \"status\": \"PRESENT\",\n  \"reason\": null,\n  \"notes\": \"Regular attendance\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/attendance",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "attendance"]
+              }
+            }
+          },
+          {
+            "name": "Get Student Attendance",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/attendance/student/1?startDate=2024-01-01&endDate=2024-01-31",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "attendance", "student", "1"],
+                "query": [
+                  {
+                    "key": "startDate",
+                    "value": "2024-01-01"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "2024-01-31"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Record Exam Result",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentId\": 1,\n  \"examId\": 1,\n  \"subjectId\": 1,\n  \"classId\": 1,\n  \"score\": 85.5,\n  \"grade\": \"A\",\n  \"remarks\": \"Excellent performance\",\n  \"startTime\": \"2024-01-15T09:00:00\",\n  \"endTime\": \"2024-01-15T11:00:00\",\n  \"submittedAt\": \"2024-01-15T10:45:00\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/exam-result",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "exam-result"]
+              }
+            }
+          },
+          {
+            "name": "Create Student Fee",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/fee/student/1?feeStructureId=1&termId=1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "fee", "student", "1"],
+                "query": [
+                  {
+                    "key": "feeStructureId",
+                    "value": "1"
+                  },
+                  {
+                    "key": "termId",
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Transition Students",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentIds\": [1, 2, 3],\n  \"fromClassId\": 1,\n  \"toClassId\": 2,\n  \"academicYearId\": 1,\n  \"transitionType\": \"PROMOTE\",\n  \"transitionDate\": \"2024-01-15T09:00:00\",\n  \"notes\": \"End of year promotion\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/transition",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "transition"]
+              }
+            }
+          },
+          {
+            "name": "Bulk Attendance",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "[\n  {\n    \"studentId\": 1,\n    \"classId\": 1,\n    \"attendanceDate\": \"2024-01-15\",\n    \"status\": \"PRESENT\"\n  },\n  {\n    \"studentId\": 2,\n    \"classId\": 1,\n    \"attendanceDate\": \"2024-01-15\",\n    \"status\": \"ABSENT\",\n    \"reason\": \"Sick\"\n  }\n]"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/attendance/bulk",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "attendance", "bulk"]
+              }
+            }
+          },
+          {
+            "name": "Student Dashboard",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/student-lifecycle/dashboard/student/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "student-lifecycle", "dashboard", "student", "1"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Teacher Workflow Management",
+        "item": [
+          {
+            "name": "Upload Document",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "file",
+                    "type": "file",
+                    "src": []
+                  },
+                  {
+                    "key": "documentType",
+                    "value": "LESSON_NOTES",
+                    "type": "text"
+                  },
+                  {
+                    "key": "subjectId",
+                    "value": "1",
+                    "type": "text"
+                  },
+                  {
+                    "key": "classId",
+                    "value": "1",
+                    "type": "text"
+                  },
+                  {
+                    "key": "title",
+                    "value": "Mathematics Lesson Notes",
+                    "type": "text"
+                  },
+                  {
+                    "key": "description",
+                    "value": "Basic algebra concepts",
+                    "type": "text"
+                  },
+                  {
+                    "key": "isPublic",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ]
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/documents/upload",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "documents", "upload"]
+              }
+            }
+          },
+          {
+            "name": "Create Assignment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"Mathematics Homework\",\n  \"description\": \"Solve algebra problems\",\n  \"subjectId\": 1,\n  \"classId\": 1,\n  \"academicYearId\": 1,\n  \"dueDate\": \"2024-12-30T23:59:00\",\n  \"totalMarks\": 100,\n  \"passingMarks\": 50,\n  \"assignmentType\": \"HOMEWORK\",\n  \"instructions\": \"Complete all problems and show your work\",\n  \"submissionFormat\": \"PDF\",\n  \"maxAttempts\": 2,\n  \"allowLateSubmission\": true,\n  \"latePenaltyPercentage\": 10\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/assignments",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "assignments"]
+              }
+            }
+          },
+          {
+            "name": "Publish Assignment",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/assignments/1/publish",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "assignments", "1", "publish"]
+              }
+            }
+          },
+          {
+            "name": "Get Teacher Assignments",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/assignments",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "assignments"]
+              }
+            }
+          },
+          {
+            "name": "Submit Assignment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"submissionText\": \"Here is my solution to the algebra problems\",\n  \"fileName\": \"homework_solution.pdf\",\n  \"fileType\": \"application/pdf\",\n  \"fileSize\": 1024000\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/assignments/1/submit",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "assignments", "1", "submit"]
+              }
+            }
+          },
+          {
+            "name": "Get Assignment Submissions",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/assignments/1/submissions",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "assignments", "1", "submissions"]
+              }
+            }
+          },
+          {
+            "name": "Grade Submission",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/submissions/1/grade?score=85&grade=A&feedback=Excellent work!",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "submissions", "1", "grade"],
+                "query": [
+                  {
+                    "key": "score",
+                    "value": "85"
+                  },
+                  {
+                    "key": "grade",
+                    "value": "A"
+                  },
+                  {
+                    "key": "feedback",
+                    "value": "Excellent work!"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Create Lesson Plan",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"Introduction to Algebra\",\n  \"description\": \"Basic algebra concepts for Grade 1\",\n  \"subjectId\": 1,\n  \"classId\": 1,\n  \"academicYearId\": 1,\n  \"lessonDate\": \"2024-12-25\",\n  \"duration\": 45,\n  \"objectives\": \"Students will learn basic algebraic expressions\",\n  \"materials\": \"Textbook, whiteboard, worksheets\",\n  \"activities\": \"Group work, individual practice\",\n  \"homework\": \"Complete exercises 1-10\",\n  \"assessment\": \"Quiz on basic concepts\",\n  \"notes\": \"Focus on understanding variables\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/lesson-plans",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "lesson-plans"]
+              }
+            }
+          },
+          {
+            "name": "Teacher Dashboard",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/teacher/dashboard",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "teacher", "dashboard"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Library Management",
+        "item": [
+          {
+            "name": "Add Book",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"title\": \"Advanced Mathematics\",\n  \"author\": \"Dr. John Smith\",\n  \"isbn\": \"978-1234567890\",\n  \"publisher\": \"Academic Press\",\n  \"publicationYear\": 2023,\n  \"edition\": \"3rd Edition\",\n  \"category\": \"Mathematics\",\n  \"subject\": \"Advanced Math\",\n  \"totalCopies\": 5,\n  \"price\": 45.99,\n  \"description\": \"Comprehensive guide to advanced mathematical concepts\",\n  \"location\": \"Shelf A-15\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books"]
+              }
+            }
+          },
+          {
+            "name": "Borrow Book",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"bookId\": 1,\n  \"studentId\": 15,\n  \"dueDate\": \"2024-12-30T17:00:00\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/library/borrow",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "borrow"]
+              }
+            }
+          },
+          {
+            "name": "Return Book",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/return/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "return", "1"]
+              }
+            }
+          },
+          {
+            "name": "Search Books",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/search?query=mathematics",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "search"],
+                "query": [
+                  {
+                    "key": "query",
+                    "value": "mathematics"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Dormitory Management",
+        "item": [
+          {
+            "name": "Create Dormitory",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Springfield Dormitory A\",\n  \"description\": \"Main dormitory for male students\",\n  \"location\": \"Building A, Campus\",\n  \"totalRooms\": 50,\n  \"monthlyFee\": 300.00,\n  \"type\": \"MALE\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/dormitory",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "dormitory"]
+              }
+            }
+          },
+          {
+            "name": "Reserve Room",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"roomId\": 1,\n  \"studentId\": 15,\n  \"checkInDate\": \"2024-09-01T00:00:00\",\n  \"checkOutDate\": \"2025-06-30T00:00:00\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/dormitory/reserve",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "dormitory", "reserve"]
+              }
+            }
+          },
+          {
+            "name": "Check In Student",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/dormitory/checkin/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "dormitory", "checkin", "1"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kitchen & Feeding",
+        "item": [
+          {
+            "name": "Create Meal Plan",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"name\": \"Lunch Special\",\n  \"description\": \"Chicken and rice with vegetables\",\n  \"mealType\": \"LUNCH\",\n  \"price\": 8.50,\n  \"availableQuantity\": 100,\n  \"mealDate\": \"2024-12-25T00:00:00\",\n  \"servingTime\": \"2024-12-25T12:00:00\",\n  \"ingredients\": \"Chicken, rice, vegetables, spices\",\n  \"allergens\": \"None\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kitchen/meals",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kitchen", "meals"]
+              }
+            }
+          },
+          {
+            "name": "Order Meal",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"mealPlanId\": 1,\n  \"studentId\": 15,\n  \"mealDate\": \"2024-12-25T00:00:00\",\n  \"specialInstructions\": \"No spicy food please\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kitchen/orders",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kitchen", "orders"]
+              }
+            }
+          },
+          {
+            "name": "Pay for Meal",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"orderId\": 1,\n  \"amount\": 8.50,\n  \"paymentMethod\": \"CASH\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kitchen/payments",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kitchen", "payments"]
+              }
+            }
+          },
+          {
+            "name": "Get Student Meal Orders",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kitchen/orders/student/15",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kitchen", "orders", "student", "15"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kenya Compliance & CBC",
+        "item": [
+          {
+            "name": "Register NEMIS Student",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentId\": 15,\n  \"nemisNumber\": \"NEMIS001234567\",\n  \"upiNumber\": \"UPI001234567\",\n  \"birthCertificateNumber\": \"BC001234567\",\n  \"nationalIdNumber\": \"12345678\",\n  \"county\": \"Nairobi\",\n  \"subCounty\": \"Westlands\",\n  \"ward\": \"Parklands\",\n  \"constituency\": \"Westlands\",\n  \"disabilityStatus\": \"NONE\",\n  \"orphanStatus\": \"NONE\",\n  \"vulnerableStatus\": \"NONE\",\n  \"isSpecialNeeds\": false,\n  \"isOrphan\": false,\n  \"isVulnerable\": false,\n  \"isBursaryRecipient\": false,\n  \"isCapitationRecipient\": true\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/nemis/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "nemis", "register"]
+              }
+            }
+          },
+          {
+            "name": "Get NEMIS Students by School",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/nemis/school/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "nemis", "school", "1"]
+              }
+            }
+          },
+          {
+            "name": "Get CBC Competencies by Grade",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/cbc/competencies/grade/GRADE_1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "cbc", "competencies", "grade", "GRADE_1"]
+              }
+            }
+          },
+          {
+            "name": "Assess Student Competency",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"studentId\": 15,\n  \"competencyId\": 1,\n  \"teacherId\": 2,\n  \"academicYearId\": 1,\n  \"termId\": 1,\n  \"level\": \"MEETS\",\n  \"assessmentType\": \"FORMATIVE\",\n  \"evidence\": \"Student demonstrated understanding through practical exercises\",\n  \"teacherComments\": \"Good progress, continue practicing\",\n  \"nextSteps\": \"Focus on advanced concepts\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/cbc/assess",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "cbc", "assess"]
+              }
+            }
+          },
+          {
+            "name": "Get Student Competencies",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/cbc/student/15/competencies",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "cbc", "student", "15", "competencies"]
+              }
+            }
+          },
+          {
+            "name": "Create Kenya Fee Structure",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"schoolId\": 1,\n  \"classId\": 1,\n  \"academicYearId\": 1,\n  \"feeName\": \"Tuition Fee\",\n  \"feeCode\": \"TUITION\",\n  \"feeType\": \"TUITION\",\n  \"amount\": 15000.00,\n  \"capitationAmount\": 10000.00,\n  \"parentContribution\": 5000.00,\n  \"frequency\": \"TERMLY\",\n  \"isMandatory\": true,\n  \"isCapitationEligible\": true,\n  \"isBursaryEligible\": true\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/fees/structure",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "fees", "structure"]
+              }
+            }
+          },
+          {
+            "name": "Get Kenya Fee Structures by School",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/fees/school/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "fees", "school", "1"]
+              }
+            }
+          },
+          {
+            "name": "Create Capitation Grant",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"schoolId\": 1,\n  \"academicYearId\": 1,\n  \"grantNumber\": \"CAP2024001\",\n  \"totalAmount\": 500000.00,\n  \"receivedAmount\": 0.00,\n  \"pendingAmount\": 500000.00,\n  \"status\": \"PENDING\",\n  \"expectedDate\": \"2024-01-15T00:00:00\",\n  \"studentCount\": 100,\n  \"perStudentAmount\": 5000.00,\n  \"remarks\": \"Q1 Capitation Grant\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/grants/capitation",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "grants", "capitation"]
+              }
+            }
+          },
+          {
+            "name": "Get Capitation Grants by School",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/grants/school/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "grants", "school", "1"]
+              }
+            }
+          },
+          {
+            "name": "Kenya Dashboard",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/kenya/dashboard/school/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "kenya", "dashboard", "school", "1"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Reporting & Analytics",
+        "item": [
+        {
+          "name": "Get Dashboard Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/dashboard/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "dashboard", "1"]
+            }
+          }
+        },
+        {
+          "name": "Generate Student Performance Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Student Performance Report - Q1 2025\",\n  \"description\": \"Quarterly student performance analysis\",\n  \"reportType\": \"STUDENT_PERFORMANCE\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-03-31\",\n  \"fileFormat\": \"PDF\",\n  \"classId\": 1,\n  \"additionalParameters\": \"{\\\"includeGrades\\\": true, \\\"includeAttendance\\\": true}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Generate Attendance Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly Attendance Report\",\n  \"description\": \"Monthly attendance summary for all classes\",\n  \"reportType\": \"ATTENDANCE\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-01-31\",\n  \"fileFormat\": \"EXCEL\",\n  \"classId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Generate Fee Collection Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fee Collection Report - Q1 2025\",\n  \"description\": \"Quarterly fee collection analysis\",\n  \"reportType\": \"FEE_COLLECTION\",\n  \"startDate\": \"2025-01-01\",\n  \"endDate\": \"2025-03-31\",\n  \"fileFormat\": \"PDF\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Get All Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/school/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "school", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Communication",
+      "item": [
+        {
+          "name": "Send Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Important School Update\",\n  \"message\": \"Please check the latest school announcements for important updates.\",\n  \"type\": \"SYSTEM\",\n  \"priority\": \"HIGH\",\n  \"schoolId\": 1,\n  \"recipientId\": 3,\n  \"metadata\": \"{\\\"category\\\": \\\"announcement\\\", \\\"urgent\\\": true}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "notifications", "send"]
+            }
+          }
+        },
+        {
+          "name": "Get User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/notifications/user/3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "notifications", "user", "3"]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/notifications/1/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "notifications", "1", "read"]
+            }
+          }
+        },
+        {
+          "name": "Create Announcement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"School Holiday Notice\",\n  \"content\": \"The school will be closed for the upcoming holiday. Classes will resume on Monday.\",\n  \"type\": \"GENERAL\",\n  \"priority\": \"MEDIUM\",\n  \"schoolId\": 1,\n  \"publishDate\": \"2025-01-15T09:00:00\",\n  \"expiryDate\": \"2025-01-20T17:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "announcements"]
+            }
+          }
+        },
+        {
+          "name": "Publish Announcement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/announcements/1/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "announcements", "1", "publish"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Announcements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/announcements/school/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "announcements", "school", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Email Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Payment Reminder\",\n  \"subject\": \"Payment Reminder - {{studentName}}\",\n  \"body\": \"Dear {{parentName}}, This is a reminder that payment for {{studentName}} is due. Amount: {{amount}}. Please make payment at your earliest convenience.\",\n  \"type\": \"PAYMENT_REMINDER\",\n  \"schoolId\": 1,\n  \"variables\": \"{\\\"studentName\\\": \\\"string\\\", \\\"parentName\\\": \\\"string\\\", \\\"amount\\\": \\\"number\\\"}\",\n  \"isDefault\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/email-templates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "email-templates"]
+            }
+          }
+        },
+        {
+          "name": "Get Email Templates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/email-templates/school/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "email-templates", "school", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Notification Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/stats/notifications/3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "stats", "notifications", "3"]
+            }
+          }
+        },
+        {
+          "name": "Get Announcement Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/communication/stats/announcements/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "communication", "stats", "announcements", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

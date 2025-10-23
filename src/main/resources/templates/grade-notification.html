@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #9b59b6;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 5px 5px;
+        }
+        .grade-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .grade-info {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .grade {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📈 Grade Update</h1>
+    </div>
+    
+    <div class="content">
+        <p>Dear <strong th:text="${parentName}">Parent</strong>,</p>
+        
+        <div class="grade-box">
+            <h3>🎓 Academic Performance Update</h3>
+        </div>
+        
+        <div class="grade-info">
+            <h3>Grade Details:</h3>
+            <ul>
+                <li><strong>Student:</strong> <span th:text="${studentName}">Student Name</span></li>
+                <li><strong>Class:</strong> <span th:text="${className}">Class Name</span></li>
+                <li><strong>Subject:</strong> <span th:text="${subject}">Subject Name</span></li>
+                <li><strong>Grade:</strong> <span class="grade" th:text="${grade}">Grade</span></li>
+                <li><strong>Remarks:</strong> <span th:text="${remarks}">Remarks</span></li>
+            </ul>
+        </div>
+        
+        <p>This is to inform you about your child's academic performance in the above subject.</p>
+        
+        <p>Please continue to support your child's learning journey.</p>
+        
+        <p>Best regards,<br>
+        <strong>School Management System</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>This is an automated notification from the School Management System.</p>
+    </div>
+</body>
+</html>
+

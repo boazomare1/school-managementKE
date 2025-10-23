@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to School Management System</title>
+</head>
+<body>
+    <h1>Welcome to School Management System!</h1>
+    <p>Dear <span th:text="${name}">User</span>,</p>
+    <p>Welcome to our School Management System! You have been registered as a <span th:text="${role}">User</span>.</p>
+    <p>We are excited to have you on board.</p>
+    <p>Best regards,<br>School Management Team</p>
+    <p><small>This email was sent from <span th:text="${fromEmail}">noreply@school.com</span></small></p>
+</body>
+</html>
+
