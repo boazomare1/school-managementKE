@@ -1013,7 +1013,51 @@
         "name": "Library Management",
         "item": [
           {
-            "name": "Add Book",
+            "name": "Get All Books",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books?page=0&size=10",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "0"
+                  },
+                  {
+                    "key": "size",
+                    "value": "10"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Book by ID",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/1",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "1"]
+              }
+            }
+          },
+          {
+            "name": "Create Book",
             "request": {
               "method": "POST",
               "header": [
@@ -1028,7 +1072,7 @@
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n  \"title\": \"Advanced Mathematics\",\n  \"author\": \"Dr. John Smith\",\n  \"isbn\": \"978-1234567890\",\n  \"publisher\": \"Academic Press\",\n  \"publicationYear\": 2023,\n  \"edition\": \"3rd Edition\",\n  \"category\": \"Mathematics\",\n  \"subject\": \"Advanced Math\",\n  \"totalCopies\": 5,\n  \"price\": 45.99,\n  \"description\": \"Comprehensive guide to advanced mathematical concepts\",\n  \"location\": \"Shelf A-15\"\n}"
+                "raw": "{\n  \"title\": \"Advanced Mathematics\",\n  \"author\": \"Dr. John Smith\",\n  \"isbn\": \"978-1234567890\",\n  \"publisher\": \"Academic Press\",\n  \"publicationYear\": 2023,\n  \"edition\": \"3rd Edition\",\n  \"category\": \"Mathematics\",\n  \"subject\": \"Advanced Math\",\n  \"totalCopies\": 5,\n  \"availableCopies\": 5,\n  \"borrowedCopies\": 0,\n  \"price\": 45.99,\n  \"description\": \"Comprehensive guide to advanced mathematical concepts\",\n  \"location\": \"Shelf A-15\",\n  \"status\": \"AVAILABLE\"\n}"
               },
               "url": {
                 "raw": "{{baseUrl}}/api/library/books",
@@ -1038,9 +1082,9 @@
             }
           },
           {
-            "name": "Borrow Book",
+            "name": "Update Book",
             "request": {
-              "method": "POST",
+              "method": "PUT",
               "header": [
                 {
                   "key": "Content-Type",
@@ -1053,19 +1097,19 @@
               ],
               "body": {
                 "mode": "raw",
-                "raw": "{\n  \"bookId\": 1,\n  \"studentId\": 15,\n  \"dueDate\": \"2024-12-30T17:00:00\"\n}"
+                "raw": "{\n  \"title\": \"Advanced Mathematics - Updated\",\n  \"author\": \"Dr. John Smith\",\n  \"isbn\": \"978-1234567890\",\n  \"publisher\": \"Academic Press\",\n  \"publicationYear\": 2023,\n  \"edition\": \"3rd Edition\",\n  \"category\": \"Mathematics\",\n  \"subject\": \"Advanced Math\",\n  \"totalCopies\": 5,\n  \"availableCopies\": 4,\n  \"borrowedCopies\": 1,\n  \"price\": 45.99,\n  \"description\": \"Updated comprehensive guide to advanced mathematical concepts\",\n  \"location\": \"Shelf A-15\",\n  \"status\": \"AVAILABLE\"\n}"
               },
               "url": {
-                "raw": "{{baseUrl}}/api/library/borrow",
+                "raw": "{{baseUrl}}/api/library/books/1",
                 "host": ["{{baseUrl}}"],
-                "path": ["api", "library", "borrow"]
+                "path": ["api", "library", "books", "1"]
               }
             }
           },
           {
-            "name": "Return Book",
+            "name": "Delete Book",
             "request": {
-              "method": "POST",
+              "method": "DELETE",
               "header": [
                 {
                   "key": "Authorization",
@@ -1073,9 +1117,9 @@
                 }
               ],
               "url": {
-                "raw": "{{baseUrl}}/api/library/return/1",
+                "raw": "{{baseUrl}}/api/library/books/1",
                 "host": ["{{baseUrl}}"],
-                "path": ["api", "library", "return", "1"]
+                "path": ["api", "library", "books", "1"]
               }
             }
           },
@@ -1090,13 +1134,181 @@
                 }
               ],
               "url": {
-                "raw": "{{baseUrl}}/api/library/books/search?query=mathematics",
+                "raw": "{{baseUrl}}/api/library/books/search?title=mathematics&author=smith&category=Mathematics&subject=Math&page=0&size=10",
                 "host": ["{{baseUrl}}"],
                 "path": ["api", "library", "books", "search"],
                 "query": [
                   {
+                    "key": "title",
+                    "value": "mathematics"
+                  },
+                  {
+                    "key": "author",
+                    "value": "smith"
+                  },
+                  {
+                    "key": "category",
+                    "value": "Mathematics"
+                  },
+                  {
+                    "key": "subject",
+                    "value": "Math"
+                  },
+                  {
+                    "key": "page",
+                    "value": "0"
+                  },
+                  {
+                    "key": "size",
+                    "value": "10"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Books by Category",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/category/Mathematics",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "category", "Mathematics"]
+              }
+            }
+          },
+          {
+            "name": "Get Books by Subject",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/subject/Advanced Math",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "subject", "Advanced Math"]
+              }
+            }
+          },
+          {
+            "name": "Get Available Books",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/available",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "available"]
+              }
+            }
+          },
+          {
+            "name": "Get Books by Status",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/status/AVAILABLE",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "status", "AVAILABLE"]
+              }
+            }
+          },
+          {
+            "name": "Borrow Book",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/1/borrow",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "1", "borrow"]
+              }
+            }
+          },
+          {
+            "name": "Return Book",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/1/return",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "1", "return"]
+              }
+            }
+          },
+          {
+            "name": "Search Books by Title",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/title?query=mathematics",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "title"],
+                "query": [
+                  {
                     "key": "query",
                     "value": "mathematics"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Search Books by Author",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{jwt_token}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/library/books/author?query=smith",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "library", "books", "author"],
+                "query": [
+                  {
+                    "key": "query",
+                    "value": "smith"
                   }
                 ]
               }
