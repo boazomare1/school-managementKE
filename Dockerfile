@@ -1,6 +1,6 @@
 # Multi-stage build for Spring Boot application
 # Stage 1: Maven builder
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
+FROM maven:3.9.9-eclipse-temurin-17 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -16,11 +16,16 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17.0.9_9-jre-alpine
 
 # Create app user for security
 RUN addgroup -g 1001 -S appgroup && \
     adduser -u 1001 -S appuser -G appgroup
+
+# Update packages and install security patches
+RUN apk update && apk upgrade && \
+    apk add --no-cache wget && \
+    rm -rf /var/cache/apk/*
 
 # Set working directory
 WORKDIR /app
