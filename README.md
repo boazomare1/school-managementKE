@@ -21,6 +21,16 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 - User profile management
 - Security checks for user operations
 
+### ✅ **Library Management System**
+- Complete library book management (`LibraryController`)
+- Book CRUD operations with validation
+- Advanced search functionality (title, author, category, subject)
+- Book borrowing and return system
+- Inventory tracking (available/borrowed copies)
+- Book status management (AVAILABLE, BORROWED, RESERVED, DAMAGED, LOST)
+- Category and subject-based filtering
+- Paginated book listings
+
 ### ✅ **Email Notification System**
 - Gmail SMTP integration with working authentication
 - HTML email templates (Thymeleaf)
@@ -90,7 +100,16 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 
 ## 🔧 **Recent Improvements & Fixes**
 
-### **User Management System (Latest Update)**
+### **Library Management System (Latest Update)**
+- ✅ **Fixed Missing LibraryController** - Created complete library management endpoints
+- ✅ **Enhanced LibraryService** - Added book management, search, and borrowing functionality
+- ✅ **Updated LibraryBookRepository** - Added advanced search queries and filtering
+- ✅ **Book Management Features** - CRUD operations, inventory tracking, status management
+- ✅ **Search & Filtering** - Advanced search by title, author, category, subject
+- ✅ **Borrowing System** - Book borrowing and return with copy tracking
+- ✅ **Tested Library Endpoints** - Verified all library operations work correctly
+
+### **User Management System**
 - ✅ **Fixed Missing UserController** - Created complete user management endpoints
 - ✅ **Enhanced UserService** - Added pagination, search, and role filtering capabilities
 - ✅ **Updated UserRepository** - Added custom queries for role-based and search operations
