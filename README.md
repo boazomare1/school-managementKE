@@ -291,6 +291,8 @@ spring:
 - Maven 3.6+
 - PostgreSQL 12+
 - Gmail account with app password
+- Docker (for SonarQube)
+- SonarQube (for code quality checks)
 
 ### **Database Setup**
 ```bash
@@ -309,6 +311,23 @@ mvn spring-boot:run
 # Production
 mvn clean package
 java -jar target/school-management-system.jar
+```
+
+### **Code Quality Setup**
+```bash
+# Quick start (recommended)
+./sonar-quick-start.sh
+
+# Or manual setup:
+# 1. Start SonarQube server
+./setup-sonar.sh
+
+# 2. Configure project in browser (http://localhost:9000)
+# 3. Set token and run analysis
+export SONAR_TOKEN=your_token_here
+./run-sonar-simple.sh
+
+# View results at http://localhost:9000
 ```
 
 ### **Docker Deployment**
@@ -415,6 +434,43 @@ curl -X POST "http://localhost:8081/api/email/simulation/parent-notifications"
 - **Health Check**: `GET /actuator/health`
 - **Metrics**: `GET /actuator/metrics`
 - **Info**: `GET /actuator/info`
+
+## 🔍 **Code Quality with SonarQube**
+
+- **Static Code Analysis**: Automated code quality checks
+- **Code Coverage**: JaCoCo integration for test coverage
+- **Code Duplication**: Detection and prevention of duplicate code
+- **Security Vulnerabilities**: Automated security issue detection
+- **Code Smells**: Identification of maintainability issues
+- **Technical Debt**: Measurement and tracking of code quality debt
+- **Quality Gates**: Automated quality checks for CI/CD pipelines
+
+### **SonarQube Setup**
+```bash
+# Start SonarQube server
+./setup-sonar.sh
+
+# Run quality analysis
+./run-sonar-analysis.sh
+
+# View results at http://localhost:9000
+```
+
+### **Quality Metrics**
+- **Code Coverage**: Target >80%
+- **Code Duplication**: Target <3%
+- **Maintainability Rating**: Target A
+- **Reliability Rating**: Target A
+- **Security Rating**: Target A
+- **Technical Debt**: Target <1 hour
+
+### **SonarQube Files**
+- `docker-compose.sonar.yml` - SonarQube Docker configuration
+- `sonar-project.properties` - SonarQube project configuration
+- `setup-sonar.sh` - Start SonarQube server
+- `run-sonar-simple.sh` - Run code quality analysis
+- `sonar-quick-start.sh` - Complete setup guide
+- `SONARQUBE_SETUP_GUIDE.md` - Detailed setup instructions
 
 ## 🔒 **Security Features**
 
