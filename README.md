@@ -324,7 +324,7 @@ java -jar target/school-management-system.jar
 
 # 2. Configure project in browser (http://localhost:9000)
 # 3. Set token and run analysis
-export SONAR_TOKEN=your_token_here
+export SONAR_TOKEN=sqa_2a8e0f458015998e035ee09f78eeabc98b81de58
 ./run-sonar-simple.sh
 
 # View results at http://localhost:9000
