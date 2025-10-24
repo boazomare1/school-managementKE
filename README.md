@@ -85,6 +85,16 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 - **Government Compliance** - Statutory deductions with proper categorization
 - **Future-Proof System** - Easy addition of new government deductions and company benefits
 
+### ✅ **Automatic ID Generation System (Frappe-style)**
+- **Naming Series Management** - Flexible ID generation with prefix, suffix, padding, and separators
+- **Multiple Series Types** - EMPLOYEE, STUDENT, TEACHER, SUPPORT_STAFF, PARENT, ADMIN
+- **Default Series** - Each type has a default series for automatic generation
+- **Custom Series** - Create custom series for specific needs (CHEF, CLEANER, MATH, etc.)
+- **Automatic Generation** - No more hardcoded IDs - everything generated automatically
+- **Sequential Numbering** - Proper increment with customizable padding
+- **Series Management** - Create, update, deactivate, and reset series counters
+- **API Integration** - Seamless integration with all entity creation endpoints
+
 ### ✅ **Dormitory & Dining**
 - Dormitory room management
 - Student dormitory assignments
@@ -116,7 +126,17 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 
 ## 🔧 **Recent Improvements & Fixes**
 
-### **Dynamic Payroll Management System (Latest Update)**
+### **Automatic ID Generation System (Latest Update)**
+- ✅ **NamingSeries Entity** - Frappe-style naming series with flexible ID generation
+- ✅ **Multiple Series Types** - EMPLOYEE, STUDENT, TEACHER, SUPPORT_STAFF, PARENT, ADMIN
+- ✅ **Default Series** - Pre-configured series for all entity types
+- ✅ **Custom Series** - Create custom series (CHEF, CLEANER, MATH, etc.)
+- ✅ **Automatic Generation** - No more hardcoded IDs - everything generated automatically
+- ✅ **IdGenerationService** - Centralized service for all ID generation needs
+- ✅ **API Integration** - Seamless integration with entity creation endpoints
+- ✅ **Series Management** - Complete CRUD operations for naming series
+
+### **Dynamic Payroll Management System**
 - ✅ **PayrollItem Entity** - Flexible structure supporting fixed amounts and percentages
 - ✅ **Percentage-Based PAYE** - Automatic 10% PAYE calculation on gross salary
 - ✅ **Kenyan 2024 Compliance** - Housing Levy (1.5%), Digital Service Tax, updated NSSF/NHIF
@@ -350,6 +370,18 @@ docker run -p 8081:8081 \
 - `GET /api/support-staff/{id}` - Get staff details
 - `PUT /api/support-staff/{id}` - Update staff profile
 - `DELETE /api/support-staff/{id}` - Deactivate staff
+
+### **Automatic ID Generation**
+- `GET /api/naming-series` - Get all naming series
+- `GET /api/naming-series/type/{type}` - Get series by type
+- `GET /api/naming-series/default/{type}` - Get default series for type
+- `POST /api/naming-series` - Create new naming series
+- `PUT /api/naming-series/{id}` - Update naming series
+- `DELETE /api/naming-series/{id}` - Deactivate naming series
+- `POST /api/naming-series/generate/{name}` - Generate ID from series
+- `POST /api/naming-series/generate-by-type/{type}` - Generate ID by type
+- `GET /api/naming-series/search?q={term}` - Search naming series
+- `POST /api/naming-series/{id}/reset` - Reset series counter
 
 ### **Email Notifications**
 - `POST /api/email/simulation/parent-notifications` - Test parent emails

@@ -25,9 +25,8 @@ public class SupportStaffDto {
     @NotNull(message = "User ID is required")
     private Long userId;
     
-    @NotBlank(message = "Employee ID is required")
     @Size(max = 50, message = "Employee ID must not exceed 50 characters")
-    private String employeeId;
+    private String employeeId; // Optional - will be auto-generated if not provided
     
     @NotNull(message = "Staff type is required")
     private SupportStaff.SupportStaffType staffType;

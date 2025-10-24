@@ -2367,6 +2367,254 @@
       ]
     },
     {
+      "name": "Automatic ID Generation",
+      "item": [
+        {
+          "name": "Get All Naming Series",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series"]
+            }
+          }
+        },
+        {
+          "name": "Get Naming Series by Type",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/type/EMPLOYEE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "type", "EMPLOYEE"]
+            }
+          }
+        },
+        {
+          "name": "Get Default Naming Series",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/default/EMPLOYEE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "default", "EMPLOYEE"]
+            }
+          }
+        },
+        {
+          "name": "Create Naming Series",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CLEANER\",\n  \"description\": \"Cleaner ID Series\",\n  \"prefix\": \"CLN\",\n  \"suffix\": \"001\",\n  \"startNumber\": 1,\n  \"currentNumber\": 1,\n  \"padding\": 3,\n  \"separator\": \"-\",\n  \"isActive\": true,\n  \"isDefault\": false,\n  \"seriesType\": \"SUPPORT_STAFF\",\n  \"notes\": \"Cleaner ID series (CLN-001, CLN-002, etc.)\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series"]
+            }
+          }
+        },
+        {
+          "name": "Update Naming Series",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CLEANER\",\n  \"description\": \"Updated Cleaner ID Series\",\n  \"prefix\": \"CLN\",\n  \"suffix\": \"001\",\n  \"startNumber\": 1,\n  \"currentNumber\": 1,\n  \"padding\": 4,\n  \"separator\": \"-\",\n  \"isActive\": true,\n  \"isDefault\": false,\n  \"seriesType\": \"SUPPORT_STAFF\",\n  \"notes\": \"Updated cleaner ID series with 4-digit padding\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "1"]
+            }
+          }
+        },
+        {
+          "name": "Generate ID by Series Name",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/generate/EMP",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "generate", "EMP"]
+            }
+          }
+        },
+        {
+          "name": "Generate ID by Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/generate-by-type/EMPLOYEE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "generate-by-type", "EMPLOYEE"]
+            }
+          }
+        },
+        {
+          "name": "Generate Student ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/generate-by-type/STUDENT",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "generate-by-type", "STUDENT"]
+            }
+          }
+        },
+        {
+          "name": "Generate Support Staff ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/generate-by-type/SUPPORT_STAFF",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "generate-by-type", "SUPPORT_STAFF"]
+            }
+          }
+        },
+        {
+          "name": "Generate Teacher ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/generate-by-type/TEACHER",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "generate-by-type", "TEACHER"]
+            }
+          }
+        },
+        {
+          "name": "Search Naming Series",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/search?q=EMP",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "EMP"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset Naming Series",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/1/reset",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "1", "reset"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Naming Series",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/naming-series/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "naming-series", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Finance Management",
       "item": [
         {

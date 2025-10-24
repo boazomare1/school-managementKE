@@ -29,30 +29,36 @@ public class SupportStaffService {
     private final SupportStaffRepository supportStaffRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final IdGenerationService idGenerationService;
 
     // Create support staff
     public ApiResponse<SupportStaffDto> createSupportStaff(SupportStaffDto supportStaffDto) {
         try {
-            log.info("Creating support staff: {}", supportStaffDto.getEmployeeId());
+            log.info("Creating support staff");
 
             // Check if user exists
             User user = userRepository.findById(supportStaffDto.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-
-            // Check if employee ID already exists
-            if (supportStaffRepository.findByEmployeeId(supportStaffDto.getEmployeeId()).isPresent()) {
-                return ApiResponse.error("Employee ID already exists");
-            }
 
             // Check if user already has a support staff record
             if (supportStaffRepository.findByUser(user).isPresent()) {
                 return ApiResponse.error("User already has a support staff record");
             }
 
+            // Generate automatic employee ID if not provided
+            String generatedEmployeeId;
+            if (supportStaffDto.getEmployeeId() != null && !supportStaffDto.getEmployeeId().trim().isEmpty()) {
+                generatedEmployeeId = supportStaffDto.getEmployeeId();
+                log.info("Using provided employee ID: {}", generatedEmployeeId);
+            } else {
+                generatedEmployeeId = idGenerationService.generateSupportStaffId();
+                log.info("Generated employee ID: {}", generatedEmployeeId);
+            }
+
             // Create support staff
             SupportStaff supportStaff = SupportStaff.builder()
                     .user(user)
-                    .employeeId(supportStaffDto.getEmployeeId())
+                    .employeeId(generatedEmployeeId)
                     .staffType(supportStaffDto.getStaffType())
                     .employmentStatus(supportStaffDto.getEmploymentStatus())
                     .hireDate(supportStaffDto.getHireDate())
