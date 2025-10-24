@@ -25,13 +25,13 @@ public class StripeService {
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${stripe.secret-key:}")
+    @Value("${stripe.secret-key:#{null}}")
     private String secretKey;
 
-    @Value("${stripe.publishable-key:}")
+    @Value("${stripe.publishable-key:#{null}}")
     private String publishableKey;
 
-    @Value("${stripe.webhook-secret:}")
+    @Value("${stripe.webhook-secret:#{null}}")
     private String webhookSecret;
 
     @Value("${stripe.environment:sandbox}")
@@ -39,6 +39,11 @@ public class StripeService {
 
     public String createPaymentIntent(String amount, String currency, String description, String customerEmail) {
         try {
+            if (secretKey == null || secretKey.trim().isEmpty()) {
+                log.error("Stripe secret key not configured. Please set stripe.secret-key");
+                return null;
+            }
+            
             log.info("Creating Stripe payment intent for amount: {}, currency: {}", amount, currency);
 
             String url = getApiUrl() + "/v1/payment_intents";
@@ -221,6 +226,11 @@ public class StripeService {
     }
 
     private boolean verifyWebhookSignature(String payload, String signature) {
+        if (webhookSecret == null || webhookSecret.trim().isEmpty()) {
+            log.error("Stripe webhook secret not configured. Please set stripe.webhook-secret");
+            return false;
+        }
+        
         // This would typically use Stripe's webhook signature verification
         // For now, we'll return true for demonstration
         return true;

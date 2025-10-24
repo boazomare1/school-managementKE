@@ -22,7 +22,7 @@ public class SimpleEmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:your-email@gmail.com}")
+    @Value("${spring.mail.username:#{null}}")
     private String fromEmail;
 
     /**
@@ -31,6 +31,11 @@ public class SimpleEmailService {
     @Transactional
     public boolean sendSimpleEmail(String to, String subject, String body) {
         try {
+            if (fromEmail == null || fromEmail.trim().isEmpty()) {
+                log.error("Email configuration not set. Please configure spring.mail.username");
+                return false;
+            }
+            
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(to);
