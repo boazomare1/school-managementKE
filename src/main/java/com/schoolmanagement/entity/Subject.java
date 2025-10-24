@@ -43,6 +43,9 @@ public class Subject {
     @Column(nullable = false)
     private Boolean isActive = true;
 
+    @Column(nullable = false)
+    private Integer credits = 1; // Default credits for subjects
+
     // For CBC Learning Areas
     private String learningArea; // e.g., "Mathematical Activities", "Language Activities"
     private String competency; // e.g., "Number Work", "Reading"

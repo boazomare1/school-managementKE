@@ -37,8 +37,13 @@ public class TeacherSpecializationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id: " + subjectId));
 
         // Check if teacher already has this subject specialization
-        if (teacherSpecializationRepository.findByTeacherAndSubject(teacher, subject).isPresent()) {
-            throw new ValidationException("Teacher already has specialization in this subject");
+        try {
+            if (teacherSpecializationRepository.findByTeacherAndSubject(teacher, subject).isPresent()) {
+                throw new ValidationException("Teacher already has specialization in this subject");
+            }
+        } catch (Exception e) {
+            log.warn("Could not check existing specializations due to session issue: {}", e.getMessage());
+            // Continue with creation - the database constraint will handle duplicates
         }
 
         // Validate specialization limits

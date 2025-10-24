@@ -26,4 +26,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     @Query("SELECT t FROM Teacher t JOIN t.user u JOIN u.roles r WHERE r.name = :role AND t.isActive = true")
     List<Teacher> findByUserRolesAndIsActiveTrue(@Param("role") String role);
+    
+    Optional<Teacher> findByUserId(Long userId);
 }
