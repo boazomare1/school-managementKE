@@ -4,7 +4,7 @@ import com.schoolmanagement.dto.ApiResponse;
 import com.schoolmanagement.entity.PerformanceReview;
 import com.schoolmanagement.entity.User;
 import com.schoolmanagement.repository.PerformanceReviewRepository;
-import com.schoolmanagement.repository.StaffRepository;
+import com.schoolmanagement.repository.SupportStaffRepository;
 import org.springframework.security.core.Authentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ class RatingSummary {
 public class PerformanceReviewController {
 
     private final PerformanceReviewRepository performanceReviewRepository;
-    private final StaffRepository staffRepository;
+    private final SupportStaffRepository supportStaffRepository;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'SUPERVISOR')")
@@ -39,7 +39,7 @@ public class PerformanceReviewController {
             @RequestBody PerformanceReview performanceReview,
             Authentication authentication) {
         try {
-            log.info("Creating performance review for staff: {}", performanceReview.getStaff().getId());
+            log.info("Creating performance review for staff: {}", performanceReview.getSupportStaff().getId());
 
             // Set reviewer
             User user = (User) authentication.getPrincipal();
@@ -150,7 +150,7 @@ public class PerformanceReviewController {
     public ResponseEntity<ApiResponse<List<PerformanceReview>>> getStaffPerformanceReviews(@PathVariable Long staffId) {
         try {
             log.info("Fetching performance reviews for staff: {}", staffId);
-            List<PerformanceReview> reviews = performanceReviewRepository.findByStaffIdAndIsActiveTrueOrderByReviewDateDesc(staffId);
+            List<PerformanceReview> reviews = performanceReviewRepository.findBySupportStaffIdAndIsActiveTrueOrderByReviewDateDesc(staffId);
             return ResponseEntity.ok(ApiResponse.success("Performance reviews retrieved successfully", reviews));
         } catch (Exception e) {
             log.error("Error fetching staff performance reviews: {}", e.getMessage());
@@ -192,7 +192,7 @@ public class PerformanceReviewController {
             @RequestParam LocalDate endDate) {
         try {
             log.info("Fetching performance reviews for staff: {} from {} to {}", staffId, startDate, endDate);
-            List<PerformanceReview> reviews = performanceReviewRepository.findByStaffIdAndReviewPeriodBetweenAndIsActiveTrueOrderByReviewDateDesc(staffId, startDate, endDate);
+            List<PerformanceReview> reviews = performanceReviewRepository.findBySupportStaffIdAndReviewPeriodBetweenAndIsActiveTrueOrderByReviewDateDesc(staffId, startDate, endDate);
             return ResponseEntity.ok(ApiResponse.success("Performance reviews retrieved successfully", reviews));
         } catch (Exception e) {
             log.error("Error fetching reviews by period: {}", e.getMessage());
@@ -221,8 +221,8 @@ public class PerformanceReviewController {
     public ResponseEntity<ApiResponse<Object>> getStaffAverageRating(@PathVariable Long staffId) {
         try {
             log.info("Fetching average rating for staff: {}", staffId);
-            Double averageRating = performanceReviewRepository.getAverageRatingByStaffId(staffId);
-            Long reviewCount = performanceReviewRepository.countByStaffIdAndIsActiveTrue(staffId);
+            Double averageRating = performanceReviewRepository.getAverageRatingBySupportStaffId(staffId);
+            Long reviewCount = performanceReviewRepository.countBySupportStaffIdAndIsActiveTrue(staffId);
             
             RatingSummary summary = new RatingSummary();
             summary.staffId = staffId;

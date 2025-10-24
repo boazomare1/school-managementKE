@@ -7,6 +7,7 @@ import com.schoolmanagement.dto.UserResponse;
 import com.schoolmanagement.entity.RefreshToken;
 import com.schoolmanagement.entity.Role;
 import com.schoolmanagement.entity.User;
+import com.schoolmanagement.entity.Notification;
 import com.schoolmanagement.exception.BadRequestException;
 import com.schoolmanagement.exception.ResourceNotFoundException;
 import com.schoolmanagement.repository.RefreshTokenRepository;
@@ -39,6 +40,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final NotificationService notificationService;
     
     @Transactional
     public UserResponse register(RegisterRequest registerRequest) {
@@ -89,6 +91,14 @@ public class AuthService {
         
         User savedUser = userRepository.save(user);
         log.info("User registered successfully: {}", savedUser.getUsername());
+        
+        // Send welcome notification - temporarily disabled
+        // try {
+        //     sendWelcomeNotification(savedUser);
+        // } catch (Exception e) {
+        //     log.error("Error sending welcome notification: {}", e.getMessage());
+        //     // Don't fail registration if notification fails
+        // }
         
         return convertToUserResponse(savedUser);
     }
@@ -197,6 +207,38 @@ public class AuthService {
                 .updatedAt(user.getUpdatedAt())
                 .roles(roles)
                 .build();
+    }
+    
+    // Send welcome notification to new user
+    private void sendWelcomeNotification(User user) {
+        try {
+            String roleName = user.getRoles().iterator().next().getName().name();
+            String welcomeMessage = String.format(
+                "Welcome to the School Management System, %s! Your %s account has been successfully created. " +
+                "You can now access all the features available to %s users. " +
+                "If you have any questions, please contact the administration.",
+                user.getFirstName(),
+                roleName.toLowerCase(),
+                roleName.toLowerCase()
+            );
+            
+            com.schoolmanagement.dto.NotificationRequestDto notificationRequest = 
+                com.schoolmanagement.dto.NotificationRequestDto.builder()
+                    .title("Welcome to School Management System!")
+                    .message(welcomeMessage)
+                    .type(Notification.NotificationType.WELCOME)
+                    .priority(Notification.NotificationPriority.HIGH)
+                    .recipientId(user.getId())
+                    .actionUrl("/dashboard")
+                    .actionText("Go to Dashboard")
+                    .build();
+            
+            notificationService.createNotification(notificationRequest);
+            log.info("Welcome notification sent to user: {}", user.getUsername());
+            
+        } catch (Exception e) {
+            log.error("Error sending welcome notification to user {}: {}", user.getUsername(), e.getMessage());
+        }
     }
 }
 

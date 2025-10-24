@@ -2,211 +2,132 @@ package com.schoolmanagement.controller;
 
 import com.schoolmanagement.dto.ApiResponse;
 import com.schoolmanagement.dto.PayrollDto;
-import com.schoolmanagement.entity.Payroll;
-import com.schoolmanagement.entity.User;
-import com.schoolmanagement.repository.PayrollRepository;
-import com.schoolmanagement.repository.StaffRepository;
+import com.schoolmanagement.dto.PayrollAllowanceDto;
+import com.schoolmanagement.dto.PayrollDeductionDto;
 import com.schoolmanagement.service.PayrollService;
-import org.springframework.security.core.Authentication;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/payroll")
 @RequiredArgsConstructor
 @Slf4j
 public class PayrollController {
-
+    
     private final PayrollService payrollService;
-    private final PayrollRepository payrollRepository;
-    private final StaffRepository staffRepository;
-
+    
+    // Process payroll for a single staff member
     @PostMapping("/process/{staffId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
     public ResponseEntity<ApiResponse<PayrollDto>> processPayroll(
             @PathVariable Long staffId,
-            @RequestParam LocalDate payPeriodStart,
-            @RequestParam LocalDate payPeriodEnd,
-            Authentication authentication) {
-        try {
-            log.info("Processing payroll for staff: {} from {} to {}", staffId, payPeriodStart, payPeriodEnd);
-            ApiResponse<Payroll> response = payrollService.processPayroll(staffId, payPeriodStart, payPeriodEnd);
-            
-            if (response.isSuccess()) {
-                PayrollDto payrollDto = convertToDto(response.getData());
-                return ResponseEntity.ok(ApiResponse.success("Payroll processed successfully", payrollDto));
-            } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
-            }
-        } catch (Exception e) {
-            log.error("Error processing payroll: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to process payroll: " + e.getMessage()));
-        }
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate payPeriodStart,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate payPeriodEnd,
+            @RequestBody(required = false) List<PayrollAllowanceDto> allowances,
+            @RequestBody(required = false) List<PayrollDeductionDto> deductions) {
+        log.info("Processing payroll for staff ID: {} for period {} to {}", staffId, payPeriodStart, payPeriodEnd);
+        return ResponseEntity.ok(payrollService.processPayroll(staffId, payPeriodStart, payPeriodEnd, 
+                allowances != null ? allowances : List.of(), 
+                deductions != null ? deductions : List.of()));
     }
-
-    @PutMapping("/approve/{payrollId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<PayrollDto>> approvePayroll(
-            @PathVariable Long payrollId,
-            Authentication authentication) {
-        try {
-            User user = (User) authentication.getPrincipal();
-            log.info("Approving payroll: {} by user: {}", payrollId, user.getUsername());
-            ApiResponse<Payroll> response = payrollService.approvePayroll(payrollId, user);
-            
-            if (response.isSuccess()) {
-                PayrollDto payrollDto = convertToDto(response.getData());
-                return ResponseEntity.ok(ApiResponse.success("Payroll approved successfully", payrollDto));
-            } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
-            }
-        } catch (Exception e) {
-            log.error("Error approving payroll: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to approve payroll: " + e.getMessage()));
-        }
+    
+    // Process bulk payroll for all active staff
+    @PostMapping("/process-bulk")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<List<PayrollDto>>> processBulkPayroll(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate payPeriodStart,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate payPeriodEnd) {
+        log.info("Processing bulk payroll for period {} to {}", payPeriodStart, payPeriodEnd);
+        return ResponseEntity.ok(payrollService.processBulkPayroll(payPeriodStart, payPeriodEnd));
     }
-
-    @GetMapping("/staff/{staffId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<List<PayrollDto>>> getStaffPayrollHistory(@PathVariable Long staffId) {
-        try {
-            log.info("Fetching payroll history for staff: {}", staffId);
-            ApiResponse<List<Payroll>> response = payrollService.getStaffPayrollHistory(staffId);
-            
-            if (response.isSuccess()) {
-                List<PayrollDto> payrollDtos = response.getData().stream()
-                        .map(this::convertToDto)
-                        .collect(Collectors.toList());
-                return ResponseEntity.ok(ApiResponse.success("Payroll history retrieved successfully", payrollDtos));
-            } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
-            }
-        } catch (Exception e) {
-            log.error("Error fetching payroll history: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch payroll history: " + e.getMessage()));
-        }
-    }
-
-    @GetMapping("/monthly")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<List<PayrollDto>>> getMonthlyPayroll(@RequestParam LocalDate month) {
-        try {
-            log.info("Fetching monthly payroll for: {}", month);
-            ApiResponse<List<Payroll>> response = payrollService.getMonthlyPayroll(month);
-            
-            if (response.isSuccess()) {
-                List<PayrollDto> payrollDtos = response.getData().stream()
-                        .map(this::convertToDto)
-                        .collect(Collectors.toList());
-                return ResponseEntity.ok(ApiResponse.success("Monthly payroll retrieved successfully", payrollDtos));
-            } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
-            }
-        } catch (Exception e) {
-            log.error("Error fetching monthly payroll: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch monthly payroll: " + e.getMessage()));
-        }
-    }
-
-    @GetMapping("/summary")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<Object>> getPayrollSummary(@RequestParam LocalDate month) {
-        try {
-            log.info("Fetching payroll summary for: {}", month);
-            ApiResponse<Object> response = payrollService.getPayrollSummary(month);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error fetching payroll summary: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch payroll summary: " + e.getMessage()));
-        }
-    }
-
+    
+    // Get payroll by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT', 'TEACHER')")
     public ResponseEntity<ApiResponse<PayrollDto>> getPayrollById(@PathVariable Long id) {
-        try {
-            log.info("Fetching payroll with ID: {}", id);
-            Optional<Payroll> payrollOptional = payrollRepository.findById(id);
-            if (payrollOptional.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            PayrollDto payrollDto = convertToDto(payrollOptional.get());
-            return ResponseEntity.ok(ApiResponse.success("Payroll retrieved successfully", payrollDto));
-        } catch (Exception e) {
-            log.error("Error fetching payroll by ID: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch payroll: " + e.getMessage()));
-        }
+        log.info("Get payroll by ID: {}", id);
+        return ResponseEntity.ok(payrollService.getPayrollById(id));
     }
-
-    @GetMapping("/status/{status}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<List<PayrollDto>>> getPayrollByStatus(@PathVariable Payroll.PayrollStatus status) {
-        try {
-            log.info("Fetching payroll by status: {}", status);
-            List<Payroll> payrolls = payrollRepository.findByStatusAndIsActiveTrueOrderByPayDateDesc(status);
-            List<PayrollDto> payrollDtos = payrolls.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(ApiResponse.success("Payroll retrieved successfully", payrollDtos));
-        } catch (Exception e) {
-            log.error("Error fetching payroll by status: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch payroll: " + e.getMessage()));
-        }
+    
+    // Get payrolls for a staff member
+    @GetMapping("/staff/{staffId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT', 'TEACHER')")
+    public ResponseEntity<ApiResponse<List<PayrollDto>>> getStaffPayrolls(
+            @PathVariable Long staffId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("Get payrolls for staff ID: {}", staffId);
+        return ResponseEntity.ok(payrollService.getStaffPayrolls(staffId, page, size));
     }
-
+    
+    // Get payrolls for a period
     @GetMapping("/period")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'FINANCE')")
-    public ResponseEntity<ApiResponse<List<PayrollDto>>> getPayrollByPeriod(
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate) {
-        try {
-            log.info("Fetching payroll for period: {} to {}", startDate, endDate);
-            List<Payroll> payrolls = payrollRepository.findByPayPeriodStartBetweenAndIsActiveTrueOrderByPayDateDesc(startDate, endDate);
-            List<PayrollDto> payrollDtos = payrolls.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(ApiResponse.success("Payroll retrieved successfully", payrollDtos));
-        } catch (Exception e) {
-            log.error("Error fetching payroll by period: {}", e.getMessage());
-            return ResponseEntity.status(500).body(ApiResponse.error("Failed to fetch payroll: " + e.getMessage()));
-        }
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<List<PayrollDto>>> getPayrollsForPeriod(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("Get payrolls for period {} to {}", startDate, endDate);
+        return ResponseEntity.ok(payrollService.getPayrollsForPeriod(startDate, endDate));
     }
-
-    private PayrollDto convertToDto(Payroll payroll) {
-        return PayrollDto.builder()
-                .id(payroll.getId())
-                .staffId(payroll.getStaff().getId())
-                .staffName(payroll.getStaff().getUser().getFirstName() + " " + payroll.getStaff().getUser().getLastName())
-                .employeeNumber(payroll.getStaff().getEmployeeNumber())
-                .payPeriodStart(payroll.getPayPeriodStart())
-                .payPeriodEnd(payroll.getPayPeriodEnd())
-                .payDate(payroll.getPayDate())
-                .basicSalary(payroll.getBasicSalary())
-                .houseAllowance(payroll.getHouseAllowance())
-                .transportAllowance(payroll.getTransportAllowance())
-                .medicalAllowance(payroll.getMedicalAllowance())
-                .otherAllowances(payroll.getOtherAllowances())
-                .grossSalary(payroll.getGrossSalary())
-                .nhifDeduction(payroll.getNhifDeduction())
-                .nssfDeduction(payroll.getNssfDeduction())
-                .payeDeduction(payroll.getPayeDeduction())
-                .otherDeductions(payroll.getOtherDeductions())
-                .totalDeductions(payroll.getTotalDeductions())
-                .netSalary(payroll.getNetSalary())
-                .status(payroll.getStatus())
-                .notes(payroll.getNotes())
-                .isActive(payroll.getIsActive())
-                .createdAt(payroll.getCreatedAt())
-                .updatedAt(payroll.getUpdatedAt())
-                .build();
+    
+    // Approve payroll
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<PayrollDto>> approvePayroll(@PathVariable Long id) {
+        log.info("Approve payroll with ID: {}", id);
+        return ResponseEntity.ok(payrollService.approvePayroll(id));
+    }
+    
+    // Process payment
+    @PostMapping("/{id}/process-payment")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<PayrollDto>> processPayment(
+            @PathVariable Long id,
+            @RequestParam String paymentMethod,
+            @RequestParam(required = false) String transactionReference) {
+        log.info("Process payment for payroll ID: {}", id);
+        return ResponseEntity.ok(payrollService.processPayment(id, paymentMethod, transactionReference));
+    }
+    
+    // Get payroll statistics
+    @GetMapping("/statistics")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<Object>> getPayrollStatistics(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        log.info("Get payroll statistics for period {} to {}", startDate, endDate);
+        return ResponseEntity.ok(payrollService.getPayrollStatistics(startDate, endDate));
+    }
+    
+    // Create payroll record
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<PayrollDto>> createPayroll(@Valid @RequestBody PayrollDto payrollDto) {
+        log.info("Creating payroll for staff ID: {}", payrollDto.getSupportStaffId());
+        return ResponseEntity.ok(payrollService.createPayroll(payrollDto));
+    }
+    
+    // Add allowance to payroll
+    @PostMapping("/allowances")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<PayrollAllowanceDto>> addAllowance(@Valid @RequestBody PayrollAllowanceDto allowanceDto) {
+        log.info("Adding allowance to payroll ID: {}", allowanceDto.getPayrollId());
+        return ResponseEntity.ok(payrollService.addAllowance(allowanceDto));
+    }
+    
+    // Add deduction to payroll
+    @PostMapping("/deductions")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'ACCOUNTANT')")
+    public ResponseEntity<ApiResponse<PayrollDeductionDto>> addDeduction(@Valid @RequestBody PayrollDeductionDto deductionDto) {
+        log.info("Adding deduction to payroll ID: {}", deductionDto.getPayrollId());
+        return ResponseEntity.ok(payrollService.addDeduction(deductionDto));
     }
 }

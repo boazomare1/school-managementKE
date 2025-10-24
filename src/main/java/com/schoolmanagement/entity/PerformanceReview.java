@@ -25,8 +25,8 @@ public class PerformanceReview {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "staff_id", nullable = false)
-    private Staff staff;
+    @JoinColumn(name = "support_staff_id", nullable = false)
+    private SupportStaff supportStaff;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewer_id", nullable = false)

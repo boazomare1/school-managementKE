@@ -6,10 +6,12 @@ import com.schoolmanagement.entity.ClassEntity;
 import com.schoolmanagement.entity.Dormitory;
 import com.schoolmanagement.entity.Teacher;
 import com.schoolmanagement.entity.User;
+import com.schoolmanagement.entity.Notification;
 import com.schoolmanagement.repository.ClassRepository;
 import com.schoolmanagement.repository.DormitoryRepository;
 import com.schoolmanagement.repository.TeacherRepository;
 import com.schoolmanagement.repository.UserRepository;
+import com.schoolmanagement.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,7 @@ public class TeacherProfileController {
     private final UserRepository userRepository;
     private final ClassRepository classRepository;
     private final DormitoryRepository dormitoryRepository;
+    private final NotificationService notificationService;
     
     // Create teacher profile
     @PostMapping
@@ -210,6 +213,14 @@ public class TeacherProfileController {
             Teacher updatedTeacher = teacherRepository.save(teacher);
             TeacherDto responseDto = convertToDto(updatedTeacher);
             
+            // Send assignment notification
+            try {
+                sendTeacherAssignmentNotification(teacher, classEntity, "CLASS_TEACHER");
+            } catch (Exception e) {
+                log.error("Error sending teacher assignment notification: {}", e.getMessage());
+                // Don't fail assignment if notification fails
+            }
+            
             log.info("Successfully assigned teacher {} as class teacher for class {}", teacherId, classId);
             return ResponseEntity.ok(ApiResponse.success("Class teacher assigned successfully", responseDto));
             
@@ -243,6 +254,14 @@ public class TeacherProfileController {
             
             Teacher updatedTeacher = teacherRepository.save(teacher);
             TeacherDto responseDto = convertToDto(updatedTeacher);
+            
+            // Send assignment notification
+            try {
+                sendTeacherAssignmentNotification(teacher, dormitory, "DORM_MASTER");
+            } catch (Exception e) {
+                log.error("Error sending teacher assignment notification: {}", e.getMessage());
+                // Don't fail assignment if notification fails
+            }
             
             log.info("Successfully assigned teacher {} as dorm master for dormitory {}", teacherId, dormitoryId);
             return ResponseEntity.ok(ApiResponse.success("Dorm master assigned successfully", responseDto));
@@ -295,6 +314,52 @@ public class TeacherProfileController {
                     .createdAt(teacher.getCreatedAt())
                     .updatedAt(teacher.getUpdatedAt())
                     .build();
+        }
+    }
+    
+    // Send teacher assignment notification
+    private void sendTeacherAssignmentNotification(Teacher teacher, Object assignment, String assignmentType) {
+        try {
+            User teacherUser = teacher.getUser();
+            String assignmentName = "";
+            String assignmentMessage = "";
+            
+            if ("CLASS_TEACHER".equals(assignmentType) && assignment instanceof ClassEntity) {
+                ClassEntity classEntity = (ClassEntity) assignment;
+                assignmentName = classEntity.getName();
+                assignmentMessage = String.format(
+                    "You have been assigned as the class teacher for %s. " +
+                    "Your responsibilities include managing the class, monitoring student progress, " +
+                    "and coordinating with parents. Please review your new assignment details.",
+                    classEntity.getName()
+                );
+            } else if ("DORM_MASTER".equals(assignmentType) && assignment instanceof Dormitory) {
+                Dormitory dormitory = (Dormitory) assignment;
+                assignmentName = dormitory.getName();
+                assignmentMessage = String.format(
+                    "You have been assigned as the dorm master for %s. " +
+                    "Your responsibilities include supervising students, maintaining dormitory discipline, " +
+                    "and ensuring student welfare. Please review your new assignment details.",
+                    dormitory.getName()
+                );
+            }
+            
+            com.schoolmanagement.dto.NotificationRequestDto notificationRequest = 
+                com.schoolmanagement.dto.NotificationRequestDto.builder()
+                    .title("New Teaching Assignment")
+                    .message(assignmentMessage)
+                    .type(Notification.NotificationType.TEACHER_ASSIGNMENT)
+                    .priority(Notification.NotificationPriority.HIGH)
+                    .recipientId(teacherUser.getId())
+                    .actionUrl("/teacher/assignments")
+                    .actionText("View Assignment Details")
+                    .build();
+            
+            notificationService.createNotification(notificationRequest);
+            log.info("Teacher assignment notification sent to: {}", teacherUser.getUsername());
+            
+        } catch (Exception e) {
+            log.error("Error sending teacher assignment notification: {}", e.getMessage());
         }
     }
 }

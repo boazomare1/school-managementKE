@@ -12,23 +12,23 @@ import java.util.List;
 @Repository
 public interface PerformanceReviewRepository extends JpaRepository<PerformanceReview, Long> {
     
-    List<PerformanceReview> findByStaffIdAndIsActiveTrueOrderByReviewDateDesc(Long staffId);
+    List<PerformanceReview> findBySupportStaffIdAndIsActiveTrueOrderByReviewDateDesc(Long supportStaffId);
     
     List<PerformanceReview> findByReviewerIdAndIsActiveTrueOrderByReviewDateDesc(Long reviewerId);
     
     List<PerformanceReview> findByStatusAndIsActiveTrueOrderByReviewDateDesc(PerformanceReview.ReviewStatus status);
     
-    @Query("SELECT p FROM PerformanceReview p WHERE p.staff.id = :staffId AND p.reviewPeriodStart >= :startDate AND p.reviewPeriodEnd <= :endDate AND p.isActive = true ORDER BY p.reviewDate DESC")
-    List<PerformanceReview> findByStaffIdAndReviewPeriodBetweenAndIsActiveTrueOrderByReviewDateDesc(
-        @Param("staffId") Long staffId,
+    @Query("SELECT p FROM PerformanceReview p WHERE p.supportStaff.id = :supportStaffId AND p.reviewPeriodStart >= :startDate AND p.reviewPeriodEnd <= :endDate AND p.isActive = true ORDER BY p.reviewDate DESC")
+    List<PerformanceReview> findBySupportStaffIdAndReviewPeriodBetweenAndIsActiveTrueOrderByReviewDateDesc(
+        @Param("supportStaffId") Long supportStaffId,
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate
     );
     
-    @Query("SELECT AVG(p.overallRating) FROM PerformanceReview p WHERE p.staff.id = :staffId AND p.isActive = true")
-    Double getAverageRatingByStaffId(@Param("staffId") Long staffId);
+    @Query("SELECT AVG(p.overallRating) FROM PerformanceReview p WHERE p.supportStaff.id = :supportStaffId AND p.isActive = true")
+    Double getAverageRatingBySupportStaffId(@Param("supportStaffId") Long supportStaffId);
     
-    @Query("SELECT COUNT(p) FROM PerformanceReview p WHERE p.staff.id = :staffId AND p.isActive = true")
-    Long countByStaffIdAndIsActiveTrue(@Param("staffId") Long staffId);
+    @Query("SELECT COUNT(p) FROM PerformanceReview p WHERE p.supportStaff.id = :supportStaffId AND p.isActive = true")
+    Long countBySupportStaffIdAndIsActiveTrue(@Param("supportStaffId") Long supportStaffId);
 }
 

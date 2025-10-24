@@ -103,6 +103,7 @@ public class SubjectDataService implements CommandLineRunner {
                 .description(description)
                 .formLevel(formLevel)
                 .stream(stream)
+                .credits(1) // Set default credits
                 .isActive(true)
                 .build();
     }
@@ -116,6 +117,7 @@ public class SubjectDataService implements CommandLineRunner {
                 .description(description)
                 .learningArea(learningArea)
                 .competency(competency)
+                .credits(1) // Set default credits
                 .isActive(true)
                 .build();
     }

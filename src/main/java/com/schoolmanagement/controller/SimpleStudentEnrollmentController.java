@@ -2,7 +2,9 @@ package com.schoolmanagement.controller;
 
 import com.schoolmanagement.dto.ApiResponse;
 import com.schoolmanagement.entity.User;
+import com.schoolmanagement.entity.Notification;
 import com.schoolmanagement.service.SimpleEmailService;
+import com.schoolmanagement.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class SimpleStudentEnrollmentController {
 
     private final SimpleEmailService emailService;
+    private final NotificationService notificationService;
 
     /**
      * Complete Student Enrollment Flow
@@ -118,6 +121,15 @@ public class SimpleStudentEnrollmentController {
             );
             
             emailService.sendSimpleEmail(dormMasterEmail, dormSubject, dormMessage);
+            
+            // Send in-app notifications
+            try {
+                sendEnrollmentNotifications(studentName, studentEmail, parent1Email, parent2Email, 
+                                         teacherEmail, dormMasterEmail, className, dormitoryName);
+            } catch (Exception e) {
+                log.error("Error sending in-app notifications: {}", e.getMessage());
+                // Don't fail enrollment if notifications fail
+            }
             
             enrollmentResult.put("notificationsSent", true);
             enrollmentResult.put("parentNotifications", 2);
@@ -483,6 +495,34 @@ public class SimpleStudentEnrollmentController {
         if (score >= 60) return "C";
         if (score >= 50) return "D";
         return "F";
+    }
+    
+    // Send enrollment notifications
+    private void sendEnrollmentNotifications(String studentName, String studentEmail, 
+                                           String parent1Email, String parent2Email,
+                                           String teacherEmail, String dormMasterEmail,
+                                           String className, String dormitoryName) {
+        try {
+            // Note: In a real implementation, you would need to find the actual User entities
+            // by email and get their IDs. For now, we'll create placeholder notifications.
+            
+            log.info("📱 Sending enrollment notifications for student: {}", studentName);
+            
+            // This is a placeholder implementation
+            // In a real system, you would:
+            // 1. Find User entities by email
+            // 2. Create notifications for each user
+            // 3. Send through the notification service
+            
+            log.info("✅ Enrollment notifications would be sent to:");
+            log.info("   - Student: {}", studentEmail);
+            log.info("   - Parents: {}, {}", parent1Email, parent2Email);
+            log.info("   - Teacher: {}", teacherEmail);
+            log.info("   - Dorm Master: {}", dormMasterEmail);
+            
+        } catch (Exception e) {
+            log.error("Error sending enrollment notifications: {}", e.getMessage());
+        }
     }
     
     private String getRemarks(int score) {

@@ -2004,6 +2004,936 @@
           }
         }
       ]
+    },
+    {
+      "name": "Payroll Management",
+      "item": [
+        {
+          "name": "Get All Payroll Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items"]
+            }
+          }
+        },
+        {
+          "name": "Get Payroll Items by Type",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items/type/ALLOWANCE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items", "type", "ALLOWANCE"]
+            }
+          }
+        },
+        {
+          "name": "Get Mandatory Payroll Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items/mandatory",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items", "mandatory"]
+            }
+          }
+        },
+        {
+          "name": "Create Payroll Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Performance Bonus\",\n  \"code\": \"PERF_BONUS\",\n  \"type\": \"ALLOWANCE\",\n  \"isMandatory\": false,\n  \"isPercentage\": false,\n  \"fixedAmount\": 5000,\n  \"isTaxable\": true,\n  \"description\": \"Performance-based bonus\",\n  \"category\": \"BENEFITS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items"]
+            }
+          }
+        },
+        {
+          "name": "Update Payroll Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"House Allowance\",\n  \"code\": \"HOUSE_ALLOW\",\n  \"type\": \"ALLOWANCE\",\n  \"isMandatory\": false,\n  \"isPercentage\": false,\n  \"fixedAmount\": 20000,\n  \"isTaxable\": true,\n  \"description\": \"Updated housing allowance\",\n  \"category\": \"BENEFITS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items", "1"]
+            }
+          }
+        },
+        {
+          "name": "Search Payroll Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items/search?q=tax",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "tax"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Payroll Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll-items/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll-items", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Payroll Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supportStaffId\": 1,\n  \"payPeriodStart\": \"2024-10-01\",\n  \"payPeriodEnd\": \"2024-10-31\",\n  \"payDate\": \"2024-10-31\",\n  \"basicSalary\": 45000,\n  \"grossPay\": 89234.78,\n  \"netPay\": 71304.51,\n  \"totalDeductions\": 17930.27,\n  \"status\": \"PROCESSED\",\n  \"paymentMethod\": \"BANK_TRANSFER\",\n  \"notes\": \"October 2024 payroll\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll"]
+            }
+          }
+        },
+        {
+          "name": "Add Allowance to Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payrollId\": 1,\n  \"allowanceType\": \"HOUSE_ALLOWANCE\",\n  \"amount\": 15000,\n  \"description\": \"House allowance for October 2024\",\n  \"isTaxable\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/allowances",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll", "allowances"]
+            }
+          }
+        },
+        {
+          "name": "Add Deduction to Payroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payrollId\": 1,\n  \"deductionType\": \"TAX\",\n  \"amount\": 15000,\n  \"description\": \"PAYE for October 2024\",\n  \"isMandatory\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/deductions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll", "deductions"]
+            }
+          }
+        },
+        {
+          "name": "Get Payroll Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff Payroll History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payroll/staff/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payroll", "staff", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support Staff Management",
+      "item": [
+        {
+          "name": "Create Support Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"employeeId\": \"CHEF001\",\n  \"staffType\": \"COOK\",\n  \"employmentStatus\": \"ACTIVE\",\n  \"hireDate\": \"2024-10-24\",\n  \"basicSalary\": 45000,\n  \"netSalary\": 71304.51,\n  \"department\": \"Kitchen\",\n  \"position\": \"Head Chef\",\n  \"employmentType\": \"FULL_TIME\",\n  \"nationalId\": \"12345678\",\n  \"taxPin\": \"P123456789X\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/support-staff",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support-staff"]
+            }
+          }
+        },
+        {
+          "name": "Get All Support Staff",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/support-staff",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support-staff"]
+            }
+          }
+        },
+        {
+          "name": "Get Support Staff by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/support-staff/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support-staff", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Support Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"CHEF001\",\n  \"staffType\": \"COOK\",\n  \"employmentStatus\": \"ACTIVE\",\n  \"hireDate\": \"2024-10-24\",\n  \"basicSalary\": 50000,\n  \"netSalary\": 80000,\n  \"department\": \"Kitchen\",\n  \"position\": \"Senior Chef\",\n  \"employmentType\": \"FULL_TIME\",\n  \"nationalId\": \"12345678\",\n  \"taxPin\": \"P123456789X\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/support-staff/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support-staff", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Support Staff",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/support-staff/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support-staff", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance Management",
+      "item": [
+        {
+          "name": "Create Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Form 1 Tuition Fee\",\n  \"description\": \"Annual tuition fee for Form 1 students\",\n  \"amount\": 50000.00,\n  \"feeType\": \"TUITION\",\n  \"paymentFrequency\": \"ANNUAL\",\n  \"isMandatory\": true,\n  \"effectiveFrom\": \"2024-01-01T00:00:00\",\n  \"effectiveTo\": \"2024-12-31T23:59:59\",\n  \"schoolId\": 1,\n  \"academicYearId\": 1,\n  \"classId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures"]
+            }
+          }
+        },
+        {
+          "name": "Get All Fee Structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures?schoolId=1&academicYearId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Fee Structure by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Fee Structure",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Form 1 Tuition Fee - Updated\",\n  \"description\": \"Updated annual tuition fee for Form 1 students\",\n  \"amount\": 55000.00,\n  \"feeType\": \"TUITION\",\n  \"paymentFrequency\": \"ANNUAL\",\n  \"isMandatory\": true,\n  \"effectiveFrom\": \"2024-01-01T00:00:00\",\n  \"effectiveTo\": \"2024-12-31T23:59:59\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Fee Structure",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/fee-structures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "fee-structures", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Fee Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/invoices?enrollmentId=1&feeStructureId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "invoices"],
+              "query": [
+                {
+                  "key": "enrollmentId",
+                  "value": "1"
+                },
+                {
+                  "key": "feeStructureId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student Invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/invoices/student/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "invoices", "student", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Invoice by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/invoices/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "invoices", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Invoice",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dueDate\": \"2024-12-31\",\n  \"notes\": \"Updated invoice with extended due date\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/invoices/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "invoices", "1"]
+            }
+          }
+        },
+        {
+          "name": "Send Payment Reminder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/invoices/1/send-reminder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "invoices", "1", "send-reminder"]
+            }
+          }
+        },
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 25000.00,\n  \"paymentMethod\": \"CASH\",\n  \"paymentNotes\": \"Partial payment for tuition fee\",\n  \"transactionId\": \"TXN123456789\",\n  \"externalReference\": \"EXT123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Get Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/student/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "student", "1"]
+            }
+          }
+        },
+        {
+          "name": "Process Refund",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/1/refund?refundAmount=5000.00&refundReason=Overpayment",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "1", "refund"],
+              "query": [
+                {
+                  "key": "refundAmount",
+                  "value": "5000.00"
+                },
+                {
+                  "key": "refundReason",
+                  "value": "Overpayment"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Finance Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/dashboard?schoolId=1&academicYearId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "dashboard"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Fee Summary Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/reports/fee-summary?schoolId=1&academicYearId=1&classId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "reports", "fee-summary"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                },
+                {
+                  "key": "classId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payment Summary Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/reports/payment-summary?schoolId=1&academicYearId=1&startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "reports", "payment-summary"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Overdue Fees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/reports/overdue-fees?schoolId=1&academicYearId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "reports", "overdue-fees"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Kenya Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schoolId\": 1,\n  \"classId\": 1,\n  \"academicYearId\": 1,\n  \"feeName\": \"Form 1 Tuition\",\n  \"feeCode\": \"TUITION_F1\",\n  \"feeType\": \"TUITION\",\n  \"amount\": 50000.00,\n  \"capitationAmount\": 20000.00,\n  \"parentContribution\": 30000.00,\n  \"frequency\": \"ANNUAL\",\n  \"isMandatory\": true,\n  \"isCapitationEligible\": true,\n  \"isBursaryEligible\": false,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/kenya-fee-structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "kenya-fee-structures"]
+            }
+          }
+        },
+        {
+          "name": "Get Kenya Fee Structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/kenya-fee-structures?schoolId=1&academicYearId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "kenya-fee-structures"],
+              "query": [
+                {
+                  "key": "schoolId",
+                  "value": "1"
+                },
+                {
+                  "key": "academicYearId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Initiate M-Pesa STK Push",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 25000.00,\n  \"paymentMethod\": \"M_PESA\",\n  \"phoneNumber\": \"254712345678\",\n  \"accountReference\": \"SCHOOL_FEE\",\n  \"transactionDescription\": \"School fee payment\",\n  \"paymentNotes\": \"M-Pesa payment for tuition fee\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/mpesa/stk-push",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "mpesa", "stk-push"]
+            }
+          }
+        },
+        {
+          "name": "Create Stripe Payment Intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 25000.00,\n  \"paymentMethod\": \"STRIPE\",\n  \"email\": \"student@school.com\",\n  \"cardToken\": \"tok_visa\",\n  \"paymentNotes\": \"Stripe payment for tuition fee\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/stripe/create-payment-intent",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "stripe", "create-payment-intent"]
+            }
+          }
+        },
+        {
+          "name": "M-Pesa Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Body\": {\n    \"stkCallback\": {\n      \"MerchantRequestID\": \"MR_123456789\",\n      \"CheckoutRequestID\": \"ws_CO_123456789\",\n      \"ResultCode\": 0,\n      \"ResultDesc\": \"The service request is processed successfully.\",\n      \"CallbackMetadata\": {\n        \"Item\": [\n          {\n            \"Name\": \"Amount\",\n            \"Value\": 25000.00\n          },\n          {\n            \"Name\": \"MpesaReceiptNumber\",\n            \"Value\": \"NLJ7RT61SV\"\n          },\n          {\n            \"Name\": \"TransactionDate\",\n            \"Value\": 20240124120000\n          },\n          {\n            \"Name\": \"PhoneNumber\",\n            \"Value\": 254712345678\n          }\n        ]\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/webhooks/mpesa",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "webhooks", "mpesa"]
+            }
+          }
+        },
+        {
+          "name": "Stripe Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"evt_1234567890\",\n  \"object\": \"event\",\n  \"type\": \"payment_intent.succeeded\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"pi_1234567890\",\n      \"object\": \"payment_intent\",\n      \"amount\": 2500000,\n      \"currency\": \"kes\",\n      \"status\": \"succeeded\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/finance/payments/webhooks/stripe",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "finance", "payments", "webhooks", "stripe"]
+            }
+          }
+        }
+      ]
     }
   ]
 }

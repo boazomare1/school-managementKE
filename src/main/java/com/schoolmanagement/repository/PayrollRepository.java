@@ -1,6 +1,9 @@
 package com.schoolmanagement.repository;
 
 import com.schoolmanagement.entity.Payroll;
+import com.schoolmanagement.entity.SupportStaff;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,33 +15,28 @@ import java.util.List;
 @Repository
 public interface PayrollRepository extends JpaRepository<Payroll, Long> {
     
-    List<Payroll> findByStaffIdAndIsActiveTrueOrderByPayDateDesc(Long staffId);
+    List<Payroll> findBySupportStaff(SupportStaff supportStaff);
     
-    List<Payroll> findByPayPeriodStartBetweenAndIsActiveTrueOrderByPayDateDesc(LocalDate startDate, LocalDate endDate);
+    List<Payroll> findBySupportStaffAndIsActiveTrue(SupportStaff supportStaff);
     
-    List<Payroll> findByStatusAndIsActiveTrueOrderByPayDateDesc(Payroll.PayrollStatus status);
+    List<Payroll> findByPayPeriodStartBetween(LocalDate startDate, LocalDate endDate);
     
-    @Query("SELECT p FROM Payroll p WHERE p.staff.id = :staffId AND p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true ORDER BY p.payDate DESC")
-    List<Payroll> findByStaffIdAndPayPeriodBetweenAndIsActiveTrueOrderByPayDateDesc(
-        @Param("staffId") Long staffId, 
-        @Param("startDate") LocalDate startDate, 
-        @Param("endDate") LocalDate endDate
-    );
+    List<Payroll> findByStatusAndIsActiveTrue(Payroll.PayrollStatus status);
     
-    @Query("SELECT p FROM Payroll p WHERE p.status = :status AND p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true ORDER BY p.payDate DESC")
-    List<Payroll> findByStatusAndPayPeriodBetweenAndIsActiveTrueOrderByPayDateDesc(
-        @Param("status") Payroll.PayrollStatus status,
-        @Param("startDate") LocalDate startDate,
-        @Param("endDate") LocalDate endDate
-    );
+    @Query("SELECT p FROM Payroll p WHERE p.supportStaff = :staff AND p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate")
+    List<Payroll> findByStaffAndDateRange(@Param("staff") SupportStaff staff, 
+                                         @Param("startDate") LocalDate startDate, 
+                                         @Param("endDate") LocalDate endDate);
     
-    @Query("SELECT SUM(p.grossSalary) FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true")
-    Double getTotalGrossSalaryByPeriod(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT p FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true")
+    List<Payroll> findByDateRange(@Param("startDate") LocalDate startDate, 
+                                 @Param("endDate") LocalDate endDate);
     
-    @Query("SELECT SUM(p.netSalary) FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true")
-    Double getTotalNetSalaryByPeriod(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT SUM(p.netPay) FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.status = 'PAID'")
+    Double getTotalPayrollForPeriod(@Param("startDate") LocalDate startDate, 
+                                   @Param("endDate") LocalDate endDate);
     
-    @Query("SELECT COUNT(p) FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.isActive = true")
-    Long countByPayPeriodBetweenAndIsActiveTrue(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT COUNT(p) FROM Payroll p WHERE p.payPeriodStart >= :startDate AND p.payPeriodEnd <= :endDate AND p.status = 'PAID'")
+    Long getPaidStaffCountForPeriod(@Param("startDate") LocalDate startDate, 
+                                   @Param("endDate") LocalDate endDate);
 }
-

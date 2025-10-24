@@ -65,12 +65,25 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 - Lesson planning
 
 ### ✅ **Finance Module**
-- Fee structure management
-- Payment processing (M-Pesa STK Push, Stripe integration)
-- Invoice generation
-- Receipt management
-- Refund processing
-- Payment gateway webhooks
+- **Complete Fee Management System** - Fee structure creation, management, and tracking
+- **Advanced Payment Processing** - Multiple payment methods (Cash, M-Pesa, Stripe, Bank Transfer)
+- **Invoice Generation & Management** - Automated invoice creation with due date tracking
+- **Payment Gateway Integration** - M-Pesa STK Push and Stripe payment intents
+- **Comprehensive Reporting** - Finance dashboard, fee summaries, payment analytics
+- **Kenya-Specific Features** - Capitation grants, bursary eligibility, government compliance
+- **Refund Management** - Complete refund processing with audit trails
+- **Webhook Support** - Real-time payment notifications from M-Pesa and Stripe
+- **Overdue Fee Tracking** - Automated identification and reminder systems
+
+### ✅ **Dynamic Payroll Management System**
+- **Flexible Payroll Items** - Support for both fixed amounts and percentage-based calculations
+- **Kenyan Payroll Compliance** - PAYE (10%), NSSF, NHIF, Housing Levy (1.5%), Digital Service Tax
+- **Dynamic Item Management** - Add, update, or remove payroll items as regulations change
+- **Percentage-Based Calculations** - Automatic PAYE and Housing Levy calculations
+- **Support Staff Management** - Complete onboarding, role assignment, and payroll processing
+- **Real-Time Payroll Processing** - Live calculation of allowances, deductions, and net pay
+- **Government Compliance** - Statutory deductions with proper categorization
+- **Future-Proof System** - Easy addition of new government deductions and company benefits
 
 ### ✅ **Dormitory & Dining**
 - Dormitory room management
@@ -103,7 +116,27 @@ A comprehensive Spring Boot 3.3.4 backend system for school management with JWT 
 
 ## 🔧 **Recent Improvements & Fixes**
 
-### **Complete Teacher Profile System (Latest Update)**
+### **Dynamic Payroll Management System (Latest Update)**
+- ✅ **PayrollItem Entity** - Flexible structure supporting fixed amounts and percentages
+- ✅ **Percentage-Based PAYE** - Automatic 10% PAYE calculation on gross salary
+- ✅ **Kenyan 2024 Compliance** - Housing Levy (1.5%), Digital Service Tax, updated NSSF/NHIF
+- ✅ **Dynamic Item Management** - Add/update/remove payroll items via REST API
+- ✅ **Support Staff Onboarding** - Complete chef onboarding with payroll processing
+- ✅ **Real-Time Calculations** - Live payroll processing with accurate deductions
+- ✅ **Government Compliance** - Statutory deductions with proper categorization
+- ✅ **Future-Proof Design** - Easy addition of new government regulations
+
+### **Comprehensive Finance Module**
+- ✅ **Enhanced FinanceController** - Added 25+ endpoints for complete finance management
+- ✅ **Advanced Payment Processing** - Multiple payment methods with gateway integration
+- ✅ **Finance Dashboard** - Real-time analytics and reporting capabilities
+- ✅ **Kenya-Specific Features** - Capitation grants, bursary eligibility, government compliance
+- ✅ **Payment Gateway Integration** - M-Pesa STK Push and Stripe payment intents
+- ✅ **Comprehensive Reporting** - Fee summaries, payment analytics, overdue tracking
+- ✅ **Webhook Support** - Real-time payment notifications from external gateways
+- ✅ **Updated Postman Collection** - Complete finance API testing suite
+
+### **Complete Teacher Profile System**
 - ✅ **Fixed Subject Database Schema** - Added missing `category`, `curriculum_type`, and `credits` columns
 - ✅ **Created Teacher Specializations** - Added Mathematics, Chemistry, Business Studies, PHE as academic specializations
 - ✅ **Added Interest-Based Roles** - Music, Film Studies, Soccer for extracurricular activities
@@ -296,6 +329,27 @@ docker run -p 8081:8081 \
 - `POST /api/payments/process` - Process payment
 - `GET /api/payments/history` - Payment history
 - `POST /api/mpesa/stk-push` - M-Pesa payment
+
+### **Payroll Management**
+- `GET /api/payroll-items` - Get all payroll items
+- `GET /api/payroll-items/type/{type}` - Get items by type (ALLOWANCE/DEDUCTION)
+- `GET /api/payroll-items/mandatory` - Get mandatory items
+- `POST /api/payroll-items` - Create new payroll item
+- `PUT /api/payroll-items/{id}` - Update payroll item
+- `DELETE /api/payroll-items/{id}` - Deactivate payroll item
+- `GET /api/payroll-items/search?q={term}` - Search payroll items
+- `POST /api/payroll` - Create payroll record
+- `POST /api/payroll/allowances` - Add allowance to payroll
+- `POST /api/payroll/deductions` - Add deduction to payroll
+- `GET /api/payroll/{id}` - Get payroll details
+- `GET /api/payroll/staff/{staffId}` - Get staff payroll history
+
+### **Support Staff Management**
+- `POST /api/support-staff` - Create support staff profile
+- `GET /api/support-staff` - List support staff
+- `GET /api/support-staff/{id}` - Get staff details
+- `PUT /api/support-staff/{id}` - Update staff profile
+- `DELETE /api/support-staff/{id}` - Deactivate staff
 
 ### **Email Notifications**
 - `POST /api/email/simulation/parent-notifications` - Test parent emails
