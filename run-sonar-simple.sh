@@ -58,7 +58,7 @@ print_warning "4. Generate a token and use it below"
 # Check if token is provided
 if [ -z "$SONAR_TOKEN" ]; then
     print_error "SONAR_TOKEN not set. Please set it or use the web interface."
-    print_status "You can also run: export SONAR_TOKEN=sqa_2a8e0f458015998e035ee09f78eeabc98b81de58"
+    print_status "You can also run: export SONAR_TOKEN=token"
     exit 1
 fi
 

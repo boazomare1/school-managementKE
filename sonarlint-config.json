@@ -1,0 +1,15 @@
+{
+  "sonarlint.connectedMode.servers": [
+    {
+      "serverId": "local-sonar",
+      "serverUrl": "http://localhost:9000",
+      "token": "${SONAR_TOKEN}"
+    }
+  ],
+  "sonarlint.connectedMode.project": {
+    "projectKey": "com.schoolmanagement:school-management-system"
+  }
+}
+
+
+
