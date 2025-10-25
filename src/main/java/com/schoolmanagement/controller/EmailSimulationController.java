@@ -18,6 +18,8 @@ import java.util.Map;
 @Slf4j
 public class EmailSimulationController {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    
     private final SimpleEmailService emailService;
 
     // User email addresses
@@ -37,20 +39,28 @@ public class EmailSimulationController {
             // 1. Fee Balance Reminder
             String feeSubject = "💰 Fee Balance Reminder - Alexina Johnson";
             String feeMessage = String.format(
-                "Dear Parent,\n\n" +
-                "This is a reminder about the outstanding fee balance for your child:\n\n" +
-                "Student: Alexina Johnson\n" +
-                "Class: Form 2A\n" +
-                "Outstanding Balance: KES 15,500.00\n" +
-                "Due Date: %s\n" +
-                "Invoice Number: INV-2025-001234\n\n" +
-                "Please make payment at your earliest convenience to avoid any inconvenience.\n\n" +
-                "Payment Options:\n" +
-                "• M-Pesa: Paybill 123456, Account: Alexina Johnson\n" +
-                "• Bank Transfer: Account details available at school\n" +
-                "• Cash payment at school office\n\n" +
-                "Best regards,\nSchool Management System",
-                LocalDateTime.now().plusDays(7).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                """
+                Dear Parent,
+
+                This is a reminder about the outstanding fee balance for your child:
+
+                Student: Alexina Johnson
+                Class: Form 2A
+                Outstanding Balance: KES 15,500.00
+                Due Date: %s
+                Invoice Number: INV-2025-001234
+
+                Please make payment at your earliest convenience to avoid any inconvenience.
+
+                Payment Options:
+                • M-Pesa: Paybill 123456, Account: Alexina Johnson
+                • Bank Transfer: Account details available at school
+                • Cash payment at school office
+
+                Best regards,
+                School Management System
+                """,
+                LocalDateTime.now().plusDays(7).format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             );
             emailService.sendSimpleEmail(PARENT_EMAIL, feeSubject, feeMessage);
             log.info("✅ Fee reminder sent to parent");
@@ -58,15 +68,22 @@ public class EmailSimulationController {
             // 2. Attendance Notification (Absent)
             String attendanceSubject = "📊 Daily Attendance Report - Alexina Johnson";
             String attendanceMessage = String.format(
-                "Dear Parent,\n\n" +
-                "This is to inform you about your child's attendance today:\n\n" +
-                "Student: Alexina Johnson\n" +
-                "Class: Form 2A\n" +
-                "Date: %s\n" +
-                "Status: ❌ ABSENT\n\n" +
-                "Your child was absent from school today. Please contact the school if this was unexpected.\n\n" +
-                "Best regards,\nSchool Management System",
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                """
+                Dear Parent,
+
+                This is to inform you about your child's attendance today:
+
+                Student: Alexina Johnson
+                Class: Form 2A
+                Date: %s
+                Status: ❌ ABSENT
+
+                Your child was absent from school today. Please contact the school if this was unexpected.
+
+                Best regards,
+                School Management System
+                """,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             );
             emailService.sendSimpleEmail(PARENT_EMAIL, attendanceSubject, attendanceMessage);
             log.info("✅ Attendance notification sent to parent");
@@ -107,7 +124,7 @@ public class EmailSimulationController {
             return ResponseEntity.ok(ApiResponse.success("All parent notifications sent successfully to " + PARENT_EMAIL));
         } catch (Exception e) {
             log.error("Error sending parent notifications: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send parent notifications: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send parent notifications: " + e.getMessage()));
         }
     }
 
@@ -132,7 +149,7 @@ public class EmailSimulationController {
                 "Please ensure you are prepared and arrive on time.\n\n" +
                 "Best regards,\nSchool Management System",
                 LocalDateTime.now().plusMinutes(15).format(DateTimeFormatter.ofPattern("HH:mm")),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             );
             emailService.sendSimpleEmail(TEACHER_EMAIL, classSubject, classMessage);
             log.info("✅ Class reminder sent to teacher");
@@ -192,7 +209,7 @@ public class EmailSimulationController {
             return ResponseEntity.ok(ApiResponse.success("All teacher notifications sent successfully to " + TEACHER_EMAIL));
         } catch (Exception e) {
             log.error("Error sending teacher notifications: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send teacher notifications: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send teacher notifications: " + e.getMessage()));
         }
     }
 
@@ -268,7 +285,7 @@ public class EmailSimulationController {
                 "Theme: Innovation in Technology\n\n" +
                 "Registration is open until %s. Don't miss this opportunity to showcase your projects!\n\n" +
                 "Best regards,\nSchool Management System",
-                LocalDateTime.now().plusDays(7).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                LocalDateTime.now().plusDays(7).format(DateTimeFormatter.ofPattern(DATE_FORMAT)),
                 LocalDateTime.now().plusDays(3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             );
             emailService.sendSimpleEmail(STUDENT_EMAIL, eventSubject, eventMessage);
@@ -277,7 +294,7 @@ public class EmailSimulationController {
             return ResponseEntity.ok(ApiResponse.success("All student notifications sent successfully to " + STUDENT_EMAIL));
         } catch (Exception e) {
             log.error("Error sending student notifications: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send student notifications: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send student notifications: " + e.getMessage()));
         }
     }
 
@@ -362,7 +379,7 @@ public class EmailSimulationController {
                 "• 1,200 fee payments processed\n" +
                 "• 3,500 attendance records updated\n\n" +
                 "Best regards,\nSystem Administrator",
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             );
             emailService.sendSimpleEmail(ADMIN_EMAIL, reportSubject, reportMessage);
             log.info("✅ Monthly report sent to admin");
@@ -370,7 +387,7 @@ public class EmailSimulationController {
             return ResponseEntity.ok(ApiResponse.success("All admin notifications sent successfully to " + ADMIN_EMAIL));
         } catch (Exception e) {
             log.error("Error sending admin notifications: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send admin notifications: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send admin notifications: " + e.getMessage()));
         }
     }
 
@@ -384,13 +401,28 @@ public class EmailSimulationController {
             
             // Send notifications to all user types
             simulateParentNotifications();
-            Thread.sleep(2000); // Small delay between batches
+            try {
+                Thread.sleep(2000); // Small delay between batches
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Thread interrupted during sleep: {}", e.getMessage());
+            }
             
             simulateTeacherNotifications();
-            Thread.sleep(2000);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Thread interrupted during sleep: {}", e.getMessage());
+            }
             
             simulateStudentNotifications();
-            Thread.sleep(2000);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Thread interrupted during sleep: {}", e.getMessage());
+            }
             
             simulateAdminNotifications();
             
@@ -405,7 +437,7 @@ public class EmailSimulationController {
             ));
         } catch (Exception e) {
             log.error("Error sending all notifications: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send all notifications: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send all notifications: " + e.getMessage()));
         }
     }
 
@@ -436,7 +468,7 @@ public class EmailSimulationController {
             return ResponseEntity.ok(ApiResponse.success("Welcome emails sent to all users successfully"));
         } catch (Exception e) {
             log.error("Error sending welcome emails: {}", e.getMessage());
-            return ResponseEntity.ok(ApiResponse.error("Failed to send welcome emails: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to send welcome emails: " + e.getMessage()));
         }
     }
 }

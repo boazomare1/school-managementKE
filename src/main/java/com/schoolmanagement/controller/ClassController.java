@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ClassController {
+
+    private static final String CLASS_NOT_FOUND_MESSAGE = "Class not found";
     
     private final ClassRepository classRepository;
     private final SchoolRepository schoolRepository;
@@ -122,7 +124,7 @@ public class ClassController {
             
             Optional<ClassEntity> classOptional = classRepository.findById(id);
             if (classOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Class not found"));
+                return ResponseEntity.badRequest().body(ApiResponse.error(CLASS_NOT_FOUND_MESSAGE));
             }
             
             ClassDto responseDto = convertToDto(classOptional.get());
@@ -143,7 +145,7 @@ public class ClassController {
             
             Optional<ClassEntity> classOptional = classRepository.findById(id);
             if (classOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Class not found"));
+                return ResponseEntity.badRequest().body(ApiResponse.error(CLASS_NOT_FOUND_MESSAGE));
             }
             
             ClassEntity classEntity = classOptional.get();
@@ -182,7 +184,7 @@ public class ClassController {
             
             Optional<ClassEntity> classOptional = classRepository.findById(id);
             if (classOptional.isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Class not found"));
+                return ResponseEntity.badRequest().body(ApiResponse.error(CLASS_NOT_FOUND_MESSAGE));
             }
             
             Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
