@@ -1,5 +1,6 @@
 package com.schoolmanagement.controller;
 
+import com.schoolmanagement.dto.ApiResponse;
 import com.schoolmanagement.entity.Subject;
 import com.schoolmanagement.entity.TeacherSpecialization;
 import com.schoolmanagement.service.TeacherSpecializationService;

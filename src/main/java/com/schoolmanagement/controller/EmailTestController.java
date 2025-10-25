@@ -14,6 +14,12 @@ import java.util.Map;
 @Slf4j
 public class EmailTestController {
 
+    // Constants to avoid literal duplication
+    private static final String SUCCESS_KEY = "success";
+    private static final String MESSAGE_KEY = "message";
+    private static final String SUCCESS_TRUE = "true";
+    private static final String SUCCESS_FALSE = "false";
+    
     private final SimpleEmailService emailService;
 
     /**
@@ -31,20 +37,20 @@ public class EmailTestController {
             
             if (success) {
                 return ResponseEntity.ok(Map.of(
-                    "success", "true",
-                    "message", "Test email sent successfully to " + to
+                    SUCCESS_KEY, SUCCESS_TRUE,
+                    MESSAGE_KEY, "Test email sent successfully to " + to
                 ));
             } else {
                 return ResponseEntity.ok(Map.of(
-                    "success", "false",
-                    "message", "Failed to send test email to " + to
+                    SUCCESS_KEY, SUCCESS_FALSE,
+                    MESSAGE_KEY, "Failed to send test email to " + to
                 ));
             }
         } catch (Exception e) {
             log.error("Error sending test email: {}", e.getMessage());
-            return ResponseEntity.ok(Map.of(
-                "success", "false",
-                "message", "Error sending test email: " + e.getMessage()
+            return ResponseEntity.internalServerError().body(Map.of(
+                SUCCESS_KEY, SUCCESS_FALSE,
+                MESSAGE_KEY, "Error sending test email: " + e.getMessage()
             ));
         }
     }
@@ -64,20 +70,20 @@ public class EmailTestController {
             
             if (success) {
                 return ResponseEntity.ok(Map.of(
-                    "success", "true",
-                    "message", "HTML test email sent successfully to " + to
+                    SUCCESS_KEY, SUCCESS_TRUE,
+                    MESSAGE_KEY, "HTML test email sent successfully to " + to
                 ));
             } else {
                 return ResponseEntity.ok(Map.of(
-                    "success", "false",
-                    "message", "Failed to send HTML test email to " + to
+                    SUCCESS_KEY, SUCCESS_FALSE,
+                    MESSAGE_KEY, "Failed to send HTML test email to " + to
                 ));
             }
         } catch (Exception e) {
             log.error("Error sending HTML test email: {}", e.getMessage());
-            return ResponseEntity.ok(Map.of(
-                "success", "false",
-                "message", "Error sending HTML test email: " + e.getMessage()
+            return ResponseEntity.internalServerError().body(Map.of(
+                SUCCESS_KEY, SUCCESS_FALSE,
+                MESSAGE_KEY, "Error sending HTML test email: " + e.getMessage()
             ));
         }
     }
@@ -97,20 +103,20 @@ public class EmailTestController {
             
             if (success) {
                 return ResponseEntity.ok(Map.of(
-                    "success", "true",
-                    "message", "Welcome email sent successfully to " + to
+                    SUCCESS_KEY, SUCCESS_TRUE,
+                    MESSAGE_KEY, "Welcome email sent successfully to " + to
                 ));
             } else {
                 return ResponseEntity.ok(Map.of(
-                    "success", "false",
-                    "message", "Failed to send welcome email to " + to
+                    SUCCESS_KEY, SUCCESS_FALSE,
+                    MESSAGE_KEY, "Failed to send welcome email to " + to
                 ));
             }
         } catch (Exception e) {
             log.error("Error sending welcome email: {}", e.getMessage());
-            return ResponseEntity.ok(Map.of(
-                "success", "false",
-                "message", "Error sending welcome email: " + e.getMessage()
+            return ResponseEntity.internalServerError().body(Map.of(
+                SUCCESS_KEY, SUCCESS_FALSE,
+                MESSAGE_KEY, "Error sending welcome email: " + e.getMessage()
             ));
         }
     }
