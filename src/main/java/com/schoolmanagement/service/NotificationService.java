@@ -118,7 +118,7 @@ public class NotificationService {
             
             log.info("Successfully created {} bulk notifications", savedNotifications.size());
             return ApiResponse.success("Bulk notifications created successfully", 
-                    savedNotifications.stream().map(this::convertToDto).collect(Collectors.toList()));
+                    savedNotifications.stream().map(this::convertToDto).toList());
             
         } catch (Exception e) {
             log.error("Error creating bulk notifications: {}", e.getMessage());

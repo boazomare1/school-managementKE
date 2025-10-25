@@ -149,7 +149,7 @@ public class QuizService {
         // Get correct options
         List<QuizOption> correctOptions = question.getOptions().stream()
             .filter(QuizOption::getIsCorrect)
-            .collect(Collectors.toList());
+            .toList();
 
         if (correctOptions.isEmpty()) {
             return BigDecimal.ZERO;

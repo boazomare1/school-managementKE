@@ -32,7 +32,7 @@ public class UserService {
                 .filter(user -> user.getRoles().stream()
                         .anyMatch(role -> role.getName().name().equals("STUDENT")))
                 .map(this::convertToUserResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     @Transactional(readOnly = true)
@@ -101,7 +101,7 @@ public class UserService {
         List<User> users = userRepository.findByRole(role);
         return users.stream()
                 .map(this::convertToUserResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     @Transactional(readOnly = true)
@@ -109,7 +109,7 @@ public class UserService {
         List<User> users = userRepository.findAllActiveUsers();
         return users.stream()
                 .map(this::convertToUserResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     @Transactional

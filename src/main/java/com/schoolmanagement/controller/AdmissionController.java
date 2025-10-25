@@ -127,7 +127,7 @@ public class AdmissionController {
             if (response.isSuccess()) {
                 List<AdmissionApplicationDto> applicationDtos = response.getData().stream()
                         .map(this::convertToDto)
-                        .collect(Collectors.toList());
+                        .toList();
                 return ResponseEntity.ok(ApiResponse.success("Applications retrieved successfully", applicationDtos));
             } else {
                 return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
@@ -148,7 +148,7 @@ public class AdmissionController {
             if (response.isSuccess()) {
                 List<AdmissionApplicationDto> applicationDtos = response.getData().stream()
                         .map(this::convertToDto)
-                        .collect(Collectors.toList());
+                        .toList();
                 return ResponseEntity.ok(ApiResponse.success("Applications retrieved successfully", applicationDtos));
             } else {
                 return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));

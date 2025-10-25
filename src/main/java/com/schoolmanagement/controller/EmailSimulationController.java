@@ -395,11 +395,13 @@ public class EmailSimulationController {
             simulateAdminNotifications();
             
             return ResponseEntity.ok(ApiResponse.success(
-                "All notifications sent successfully to all user types:\n" +
-                "• Parent: " + PARENT_EMAIL + "\n" +
-                "• Teacher: " + TEACHER_EMAIL + "\n" +
-                "• Student: " + STUDENT_EMAIL + "\n" +
-                "• Admin: " + ADMIN_EMAIL
+                """
+                All notifications sent successfully to all user types:
+                • Parent: %s
+                • Teacher: %s
+                • Student: %s
+                • Admin: %s
+                """.formatted(PARENT_EMAIL, TEACHER_EMAIL, STUDENT_EMAIL, ADMIN_EMAIL)
             ));
         } catch (Exception e) {
             log.error("Error sending all notifications: {}", e.getMessage());

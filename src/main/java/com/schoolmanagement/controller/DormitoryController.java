@@ -86,7 +86,7 @@ public class DormitoryController {
             List<Dormitory> dormitories = dormitoryRepository.findByIsActiveTrue();
             List<DormitoryDto> dormitoryDtos = dormitories.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ResponseEntity.ok(ApiResponse.success("Dormitories retrieved successfully", dormitoryDtos));
             

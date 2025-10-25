@@ -136,7 +136,7 @@ public class PayrollService {
                         }
                     })
                     .filter(payroll -> payroll != null)
-                    .collect(Collectors.toList());
+                    .toList();
             
             log.info("Successfully processed {} payroll records", processedPayrolls.size());
             return ApiResponse.success("Bulk payroll processed successfully", processedPayrolls);
@@ -174,7 +174,7 @@ public class PayrollService {
             
             List<PayrollDto> payrollDtos = payrolls.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Staff payrolls retrieved successfully", payrollDtos);
         } catch (Exception e) {
@@ -192,7 +192,7 @@ public class PayrollService {
             
             List<PayrollDto> payrollDtos = payrolls.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Payrolls for period retrieved successfully", payrollDtos);
         } catch (Exception e) {

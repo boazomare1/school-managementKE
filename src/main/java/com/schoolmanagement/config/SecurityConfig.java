@@ -28,6 +28,13 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    // Role constants to avoid literal duplication
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_STUDENT = "STUDENT";
+    private static final String ROLE_TEACHER = "TEACHER";
+    private static final String ROLE_PARENT = "PARENT";
+    private static final String ROLE_HR = "HR";
     
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
@@ -64,12 +71,12 @@ public class SecurityConfig {
                     .requestMatchers("/api/payments/test/**").permitAll()
                     .requestMatchers("/api/email/test/**").permitAll()
                     .requestMatchers("/api/email/simulation/**").permitAll()
-                    .requestMatchers("/api/dining/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER", "PARENT")
-                    .requestMatchers("/api/notifications/targeted/**").hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers("/api/student-relationships/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT", "PARENT")
-                        .requestMatchers("/api/enrollment/**").hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers("/api/teacher-specializations/**").hasAnyRole("ADMIN", "HR", "TEACHER")
-                    .requestMatchers("/api/students").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                    .requestMatchers("/api/dining/**").hasAnyRole(ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER, ROLE_PARENT)
+                    .requestMatchers("/api/notifications/targeted/**").hasAnyRole(ROLE_ADMIN, ROLE_TEACHER)
+                        .requestMatchers("/api/student-relationships/**").hasAnyRole(ROLE_ADMIN, ROLE_TEACHER, ROLE_STUDENT, ROLE_PARENT)
+                        .requestMatchers("/api/enrollment/**").hasAnyRole(ROLE_ADMIN, ROLE_TEACHER)
+                        .requestMatchers("/api/teacher-specializations/**").hasAnyRole(ROLE_ADMIN, ROLE_HR, ROLE_TEACHER)
+                    .requestMatchers("/api/students").hasAnyRole(ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER)
                     .anyRequest().authenticated()
             );
         

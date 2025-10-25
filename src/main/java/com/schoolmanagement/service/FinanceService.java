@@ -101,7 +101,7 @@ public class FinanceService {
             List<FeeStructure> feeStructures = feeStructureRepository.findBySchoolIdAndAcademicYearIdAndIsActiveTrue(schoolId, academicYearId);
             List<FeeStructureDto> feeStructureDtos = feeStructures.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Fee structures retrieved successfully", feeStructureDtos);
             
@@ -160,7 +160,7 @@ public class FinanceService {
             List<FeeInvoice> invoices = feeInvoiceRepository.findActiveInvoicesByEnrollment(enrollmentId);
             List<FeeInvoiceDto> invoiceDtos = invoices.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Student invoices retrieved successfully", invoiceDtos);
             
@@ -436,7 +436,7 @@ public class FinanceService {
             List<Payment> payments = paymentRepository.findActivePaymentsByEnrollment(enrollmentId);
             List<PaymentDto> paymentDtos = payments.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Student payments retrieved successfully", paymentDtos);
         } catch (Exception e) {
             log.error("Error fetching student payments for enrollment {}: {}", enrollmentId, e.getMessage());
@@ -607,7 +607,7 @@ public class FinanceService {
             List<FeeInvoice> overdueInvoices = feeInvoiceRepository.findOverdueInvoices(LocalDate.now());
             List<FeeInvoiceDto> invoiceDtos = overdueInvoices.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Overdue fees retrieved successfully", invoiceDtos);
         } catch (Exception e) {
             log.error("Error fetching overdue fees: {}", e.getMessage());
@@ -665,7 +665,7 @@ public class FinanceService {
             List<KenyaFeeStructure> kenyaFeeStructures = kenyaFeeStructureRepository.findBySchoolAndClassAndAcademicYear(schoolId, null, academicYearId);
             List<com.schoolmanagement.dto.KenyaFeeStructureDto> kenyaFeeStructureDtos = kenyaFeeStructures.stream()
                     .map(this::convertToKenyaDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Kenya fee structures retrieved successfully", kenyaFeeStructureDtos);
         } catch (Exception e) {
             log.error("Error fetching Kenya fee structures: {}", e.getMessage());

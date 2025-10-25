@@ -300,7 +300,7 @@ public class StudentLifecycleService {
             List<StudentGrade> enrollments = studentGradeRepository.findByStudentIdAndIsActiveTrueOrderByEnrollmentDateDesc(studentId);
             List<StudentGradeDto> enrollmentDtos = enrollments.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Student enrollments retrieved successfully", enrollmentDtos);
         } catch (Exception e) {
             log.error("Error fetching student enrollments: {}", e.getMessage());
@@ -314,7 +314,7 @@ public class StudentLifecycleService {
             List<StudentAttendance> attendance = studentAttendanceRepository.findByStudentAndDateRange(studentId, startDate, endDate);
             List<StudentAttendanceDto> attendanceDtos = attendance.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Student attendance retrieved successfully", attendanceDtos);
         } catch (Exception e) {
             log.error("Error fetching student attendance: {}", e.getMessage());

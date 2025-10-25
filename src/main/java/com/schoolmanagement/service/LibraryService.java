@@ -194,7 +194,7 @@ public class LibraryService {
             List<LibraryBook> books = libraryBookRepository.findByCategory(category);
             List<LibraryBookDto> bookDtos = books.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Books retrieved successfully", bookDtos);
             
@@ -212,7 +212,7 @@ public class LibraryService {
             List<LibraryBook> books = libraryBookRepository.findBySubject(subject);
             List<LibraryBookDto> bookDtos = books.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Books retrieved successfully", bookDtos);
             
@@ -230,7 +230,7 @@ public class LibraryService {
             List<LibraryBook> books = libraryBookRepository.findAvailableBooks();
             List<LibraryBookDto> bookDtos = books.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Available books retrieved successfully", bookDtos);
             
@@ -248,7 +248,7 @@ public class LibraryService {
             List<LibraryBook> books = libraryBookRepository.findByStatusAndIsActiveTrue(status);
             List<LibraryBookDto> bookDtos = books.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Books retrieved successfully", bookDtos);
             

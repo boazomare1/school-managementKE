@@ -100,10 +100,10 @@ public class ClassController {
             
             List<ClassEntity> classes = classRepository.findAll().stream()
                     .filter(ClassEntity::getIsActive)
-                    .collect(Collectors.toList());
+                    .toList();
             List<ClassDto> classDtos = classes.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ResponseEntity.ok(ApiResponse.success("Classes retrieved successfully", classDtos));
             

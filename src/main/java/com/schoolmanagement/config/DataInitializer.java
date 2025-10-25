@@ -21,7 +21,7 @@ public class DataInitializer implements CommandLineRunner {
     
     private void initializeRoles() {
         for (Role.RoleName roleName : Role.RoleName.values()) {
-            if (!roleRepository.existsByName(roleName)) {
+            if (roleRepository.existsByName(roleName) == false) {
                 Role role = Role.builder()
                         .name(roleName)
                         .description("Role for " + roleName.name().toLowerCase())

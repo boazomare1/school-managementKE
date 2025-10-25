@@ -131,7 +131,7 @@ public class TeacherProfileController {
             List<Teacher> teachers = teacherRepository.findByIsActiveTrue();
             List<TeacherDto> teacherDtos = teachers.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ResponseEntity.ok(ApiResponse.success("Teachers retrieved successfully", teacherDtos));
             

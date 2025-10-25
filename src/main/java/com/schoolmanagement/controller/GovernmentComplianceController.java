@@ -51,7 +51,7 @@ public class GovernmentComplianceController {
             List<CapitationGrant> grants = capitationGrantRepository.findAll();
             List<CapitationGrantDto> grantDtos = grants.stream()
                     .map(this::convertCapitationGrantToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Capitation grants retrieved successfully", grantDtos));
         } catch (Exception e) {
             log.error("Error fetching capitation grants: {}", e.getMessage());
@@ -67,7 +67,7 @@ public class GovernmentComplianceController {
             List<CapitationGrant> grants = capitationGrantRepository.findBySchoolIdAndIsActiveTrueOrderByCreatedAtDesc(schoolId);
             List<CapitationGrantDto> grantDtos = grants.stream()
                     .map(this::convertCapitationGrantToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Capitation grants retrieved successfully", grantDtos));
         } catch (Exception e) {
             log.error("Error fetching capitation grants by school: {}", e.getMessage());
@@ -83,7 +83,7 @@ public class GovernmentComplianceController {
             List<CapitationGrant> grants = capitationGrantRepository.findByAcademicYearIdAndIsActiveTrueOrderByApplicationDateDesc(academicYearId);
             List<CapitationGrantDto> grantDtos = grants.stream()
                     .map(this::convertCapitationGrantToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Capitation grants retrieved successfully", grantDtos));
         } catch (Exception e) {
             log.error("Error fetching capitation grants by academic year: {}", e.getMessage());
@@ -142,7 +142,7 @@ public class GovernmentComplianceController {
             List<Bursary> bursaries = bursaryRepository.findAll();
             List<Object> bursaryDtos = bursaries.stream()
                     .map(this::convertBursaryToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Bursaries retrieved successfully", bursaryDtos));
         } catch (Exception e) {
             log.error("Error fetching bursaries: {}", e.getMessage());
@@ -158,7 +158,7 @@ public class GovernmentComplianceController {
             List<Bursary> bursaries = bursaryRepository.findByStudentIdAndIsActiveTrueOrderByApplicationDateDesc(studentId);
             List<Object> bursaryDtos = bursaries.stream()
                     .map(this::convertBursaryToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Bursaries retrieved successfully", bursaryDtos));
         } catch (Exception e) {
             log.error("Error fetching bursaries by student: {}", e.getMessage());
@@ -174,7 +174,7 @@ public class GovernmentComplianceController {
             List<Bursary> bursaries = bursaryRepository.findBySchoolIdAndIsActiveTrueOrderByApplicationDateDesc(schoolId);
             List<Object> bursaryDtos = bursaries.stream()
                     .map(this::convertBursaryToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Bursaries retrieved successfully", bursaryDtos));
         } catch (Exception e) {
             log.error("Error fetching bursaries by school: {}", e.getMessage());
@@ -190,7 +190,7 @@ public class GovernmentComplianceController {
             List<Bursary> bursaries = bursaryRepository.findByStatusAndIsActiveTrueOrderByApplicationDateDesc(status);
             List<Object> bursaryDtos = bursaries.stream()
                     .map(this::convertBursaryToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok(ApiResponse.success("Bursaries retrieved successfully", bursaryDtos));
         } catch (Exception e) {
             log.error("Error fetching bursaries by status: {}", e.getMessage());

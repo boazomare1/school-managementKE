@@ -142,7 +142,7 @@ public class ReportingService {
             
             List<ReportDto> reportDtos = reports.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Reports retrieved successfully", reportDtos);
             
@@ -253,7 +253,7 @@ public class ReportingService {
         List<DashboardWidget> widgets = dashboardWidgetRepository.findActiveWidgetsBySchoolOrdered(schoolId);
         return widgets.stream()
                 .map(this::convertWidgetToMap)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     private Map<String, Object> convertWidgetToMap(DashboardWidget widget) {

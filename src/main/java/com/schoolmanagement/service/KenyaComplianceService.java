@@ -199,7 +199,7 @@ public class KenyaComplianceService {
             List<NemisStudent> students = nemisStudentRepository.findBySchoolId(schoolId);
             List<NemisStudentDto> studentDtos = students.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("NEMIS students retrieved successfully", studentDtos);
         } catch (Exception e) {
             log.error("Error fetching NEMIS students: {}", e.getMessage());
@@ -215,7 +215,7 @@ public class KenyaComplianceService {
                     CbcCompetency.GradeLevel.valueOf(gradeLevel));
             List<CbcCompetencyDto> competencyDtos = competencies.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("CBC competencies retrieved successfully", competencyDtos);
         } catch (Exception e) {
             log.error("Error fetching CBC competencies: {}", e.getMessage());
@@ -230,7 +230,7 @@ public class KenyaComplianceService {
             List<StudentCompetency> competencies = studentCompetencyRepository.findByStudentIdAndIsActiveTrueOrderByCreatedAtDesc(studentId);
             List<StudentCompetencyDto> competencyDtos = competencies.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Student competencies retrieved successfully", competencyDtos);
         } catch (Exception e) {
             log.error("Error fetching student competencies: {}", e.getMessage());
@@ -245,7 +245,7 @@ public class KenyaComplianceService {
             List<KenyaFeeStructure> feeStructures = kenyaFeeStructureRepository.findBySchoolIdAndIsActiveTrueOrderByCreatedAtDesc(schoolId);
             List<KenyaFeeStructureDto> feeStructureDtos = feeStructures.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Kenya fee structures retrieved successfully", feeStructureDtos);
         } catch (Exception e) {
             log.error("Error fetching Kenya fee structures: {}", e.getMessage());
@@ -260,7 +260,7 @@ public class KenyaComplianceService {
             List<CapitationGrant> grants = capitationGrantRepository.findBySchoolIdAndIsActiveTrueOrderByCreatedAtDesc(schoolId);
             List<CapitationGrantDto> grantDtos = grants.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Capitation grants retrieved successfully", grantDtos);
         } catch (Exception e) {
             log.error("Error fetching capitation grants: {}", e.getMessage());

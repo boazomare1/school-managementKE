@@ -66,7 +66,7 @@ public class NamingSeriesService {
         try {
             log.info("Fetching all naming series");
             List<NamingSeries> series = namingSeriesRepository.findByIsActiveTrueOrderByNameAsc();
-            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Naming series retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error fetching naming series: {}", e.getMessage());
@@ -79,7 +79,7 @@ public class NamingSeriesService {
         try {
             log.info("Fetching naming series by type: {}", seriesType);
             List<NamingSeries> series = namingSeriesRepository.findBySeriesTypeOrderByDefaultAndName(seriesType);
-            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Naming series retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error fetching naming series by type: {}", e.getMessage());
@@ -211,7 +211,7 @@ public class NamingSeriesService {
         try {
             log.info("Searching naming series with term: {}", searchTerm);
             List<NamingSeries> series = namingSeriesRepository.findBySearchTerm(searchTerm);
-            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<NamingSeriesDto> dtoList = series.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Search results retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error searching naming series: {}", e.getMessage());
@@ -241,7 +241,7 @@ public class NamingSeriesService {
     // Helper method to unset default for a series type
     private void unsetDefaultForSeriesType(NamingSeries.SeriesType seriesType) {
         List<NamingSeries> existingDefaults = namingSeriesRepository.findBySeriesTypeAndIsDefaultTrueAndIsActiveTrue(seriesType)
-                .stream().collect(Collectors.toList());
+                .stream().toList();
         
         for (NamingSeries series : existingDefaults) {
             series.setIsDefault(false);

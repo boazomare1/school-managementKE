@@ -62,7 +62,7 @@ public class SchoolService {
             List<School> schools = schoolRepository.findAllActiveSchools();
             List<SchoolDto> schoolDtos = schools.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             
             return ApiResponse.success("Schools retrieved successfully", schoolDtos);
             

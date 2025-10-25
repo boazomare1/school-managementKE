@@ -323,7 +323,7 @@ public class TeacherService {
             List<Assignment> assignments = assignmentRepository.findByTeacherIdAndIsActiveTrueOrderByAssignedDateDesc(teacherId);
             List<AssignmentDto> assignmentDtos = assignments.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Teacher assignments retrieved successfully", assignmentDtos);
         } catch (Exception e) {
             log.error("Error fetching teacher assignments: {}", e.getMessage());
@@ -338,7 +338,7 @@ public class TeacherService {
             List<AssignmentSubmission> submissions = assignmentSubmissionRepository.findByAssignmentIdAndIsActiveTrueOrderBySubmittedAtDesc(assignmentId);
             List<AssignmentSubmissionDto> submissionDtos = submissions.stream()
                     .map(this::convertToDto)
-                    .collect(Collectors.toList());
+                    .toList();
             return ApiResponse.success("Assignment submissions retrieved successfully", submissionDtos);
         } catch (Exception e) {
             log.error("Error fetching assignment submissions: {}", e.getMessage());

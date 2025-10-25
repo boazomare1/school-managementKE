@@ -66,7 +66,7 @@ public class PayrollItemService {
         try {
             log.info("Fetching all payroll items");
             List<PayrollItem> items = payrollItemRepository.findByIsActiveTrueOrderByNameAsc();
-            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Payroll items retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error fetching payroll items: {}", e.getMessage());
@@ -79,7 +79,7 @@ public class PayrollItemService {
         try {
             log.info("Fetching payroll items by type: {}", type);
             List<PayrollItem> items = payrollItemRepository.findByTypeAndIsActiveTrueOrderByNameAsc(type);
-            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Payroll items retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error fetching payroll items by type: {}", e.getMessage());
@@ -92,7 +92,7 @@ public class PayrollItemService {
         try {
             log.info("Fetching mandatory payroll items");
             List<PayrollItem> items = payrollItemRepository.findByIsMandatoryTrueAndIsActiveTrueOrderByNameAsc();
-            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Mandatory payroll items retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error fetching mandatory payroll items: {}", e.getMessage());
@@ -164,7 +164,7 @@ public class PayrollItemService {
         try {
             log.info("Searching payroll items with term: {}", searchTerm);
             List<PayrollItem> items = payrollItemRepository.findBySearchTerm(searchTerm);
-            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).collect(Collectors.toList());
+            List<PayrollItemDto> dtoList = items.stream().map(this::convertToDto).toList();
             return ApiResponse.success("Search results retrieved successfully", dtoList);
         } catch (Exception e) {
             log.error("Error searching payroll items: {}", e.getMessage());
