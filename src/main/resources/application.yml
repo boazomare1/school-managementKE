@@ -127,3 +127,18 @@ app:
     allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
     allowed-headers: "*"
     allow-credentials: true
+
+# M-Pesa Configuration
+# To switch to production:
+#   1. Change environment: from "sandbox" to "production"
+#   2. Update consumer-key, consumer-secret with production credentials from Safaricom Developer Portal
+#   3. Update short-code to your production business number
+#   4. Update pass-key to production passkey from your production app
+#   5. Update callback-url to your production HTTPS endpoint
+mpesa:
+  environment: ${MPESA_ENVIRONMENT:sandbox}  # Options: "sandbox" or "production"
+  consumer-key: ${MPESA_CONSUMER_KEY:17ZdF9Q2PKAOwJ64Yzl1dxS4iZMsQOAXUUaEVSQZrTmDbMkG}
+  consumer-secret: ${MPESA_CONSUMER_SECRET:ZGhNJhzbE9DHKKmAhAZWI045A5B6yUG3uAqnXpx5LJjXYWH7Stn8xUxqGHWpfhKE}
+  short-code: ${MPESA_SHORT_CODE:174379}
+  pass-key: ${MPESA_PASS_KEY:bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919}
+  callback-url: ${MPESA_CALLBACK_URL:https://e877a2ada6ee.ngrok-free.app/api/finance/payments/webhooks/mpesa}

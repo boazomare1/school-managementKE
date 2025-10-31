@@ -46,13 +46,38 @@ public class FinanceController {
     @PostMapping("/invoices")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<FeeInvoiceDto>> createFeeInvoice(
-            @RequestParam Long enrollmentId, 
+            @RequestParam(required = false) Long enrollmentId,
+            @RequestParam(required = false) Long studentId,
             @RequestParam Long feeStructureId) {
-        log.info("Creating fee invoice request for enrollment: {} and fee structure: {}", enrollmentId, feeStructureId);
-        return ResponseEntity.ok(financeService.createFeeInvoice(enrollmentId, feeStructureId));
+        log.info("Creating fee invoice request for enrollment: {}, student: {}, fee structure: {}", enrollmentId, studentId, feeStructureId);
+        
+        // If studentId is provided, use it; otherwise use enrollmentId
+        if (studentId != null) {
+            return ResponseEntity.ok(financeService.createFeeInvoiceByStudentId(studentId, feeStructureId));
+        } else if (enrollmentId != null) {
+            return ResponseEntity.ok(financeService.createFeeInvoice(enrollmentId, feeStructureId));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Either enrollmentId or studentId must be provided"));
+        }
     }
     
-    @GetMapping("/invoices/student/{enrollmentId}")
+    @GetMapping("/invoices")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    public ResponseEntity<ApiResponse<List<FeeInvoiceDto>>> getAllInvoices(
+            @RequestParam(required = false) Long schoolId,
+            @RequestParam(required = false) String status) {
+        log.info("Get all invoices request - school: {}, status: {}", schoolId, status);
+        return ResponseEntity.ok(financeService.getAllInvoices(schoolId, status));
+    }
+    
+    @GetMapping("/invoices/student/{studentId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'STUDENT', 'PARENT')")
+    public ResponseEntity<ApiResponse<List<FeeInvoiceDto>>> getStudentInvoicesByStudentId(@PathVariable Long studentId) {
+        log.info("Get student invoices request for student ID: {}", studentId);
+        return ResponseEntity.ok(financeService.getStudentInvoicesByStudentId(studentId));
+    }
+    
+    @GetMapping("/invoices/enrollment/{enrollmentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'STUDENT', 'PARENT')")
     public ResponseEntity<ApiResponse<List<FeeInvoiceDto>>> getStudentInvoices(@PathVariable Long enrollmentId) {
         log.info("Get student invoices request for enrollment: {}", enrollmentId);
@@ -206,7 +231,7 @@ public class FinanceController {
     // Payment Gateway Integration
     @PostMapping("/payments/mpesa/stk-push")
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'STUDENT', 'PARENT')")
-    public ResponseEntity<ApiResponse<Object>> initiateMpesaStkPush(
+    public ResponseEntity<ApiResponse<com.schoolmanagement.dto.MpesaStkPushResponse>> initiateMpesaStkPush(
             @Valid @RequestBody PaymentRequestDto paymentRequest,
             Authentication authentication) {
         log.info("Initiating M-Pesa STK Push for invoice: {}", paymentRequest.getInvoiceId());

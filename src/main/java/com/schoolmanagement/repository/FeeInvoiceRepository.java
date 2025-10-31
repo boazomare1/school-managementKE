@@ -26,6 +26,21 @@ public interface FeeInvoiceRepository extends JpaRepository<FeeInvoice, Long> {
     
     @Query("SELECT fi FROM FeeInvoice fi WHERE fi.dueDate < :currentDate AND fi.status IN ('PENDING', 'PARTIAL') AND fi.isActive = true ORDER BY fi.dueDate")
     List<FeeInvoice> findOverdueInvoices(LocalDate currentDate);
+    
+    @Query("SELECT fi FROM FeeInvoice fi WHERE fi.enrollment.student.id = :studentId AND fi.isActive = true ORDER BY fi.issueDate DESC")
+    List<FeeInvoice> findActiveInvoicesByStudentId(Long studentId);
+    
+    @Query("SELECT fi FROM FeeInvoice fi WHERE fi.isActive = true ORDER BY fi.issueDate DESC")
+    List<FeeInvoice> findAllActiveInvoices();
+    
+    @Query("SELECT fi FROM FeeInvoice fi WHERE fi.enrollment.classEntity.school.id = :schoolId AND fi.isActive = true ORDER BY fi.issueDate DESC")
+    List<FeeInvoice> findActiveInvoicesBySchoolId(Long schoolId);
+    
+    @Query("SELECT fi FROM FeeInvoice fi WHERE fi.status = :status AND fi.isActive = true ORDER BY fi.issueDate DESC")
+    List<FeeInvoice> findActiveInvoicesByStatus(String status);
+    
+    @Query("SELECT fi FROM FeeInvoice fi WHERE fi.enrollment.classEntity.school.id = :schoolId AND fi.status = :status AND fi.isActive = true ORDER BY fi.issueDate DESC")
+    List<FeeInvoice> findActiveInvoicesBySchoolIdAndStatus(Long schoolId, String status);
 }
 
 

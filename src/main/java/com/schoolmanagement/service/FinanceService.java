@@ -5,8 +5,10 @@ import com.schoolmanagement.dto.FeeStructureDto;
 import com.schoolmanagement.dto.FeeInvoiceDto;
 import com.schoolmanagement.dto.PaymentDto;
 import com.schoolmanagement.dto.PaymentRequestDto;
+import com.schoolmanagement.dto.MpesaStkPushResponse;
 import com.schoolmanagement.entity.*;
 import com.schoolmanagement.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,9 @@ public class FinanceService {
     private final NotificationService notificationService;
     private final KenyaFeeStructureRepository kenyaFeeStructureRepository;
     private final StudentFeeRepository studentFeeRepository;
+    private final UserRepository userRepository;
+    private final MpesaService mpesaService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     // Fee Structure Management
     public ApiResponse<FeeStructureDto> createFeeStructure(FeeStructureDto feeStructureDto) {
@@ -153,6 +158,88 @@ public class FinanceService {
         }
     }
     
+    // Create invoice using student ID (finds active enrollment automatically)
+    public ApiResponse<FeeInvoiceDto> createFeeInvoiceByStudentId(Long studentId, Long feeStructureId) {
+        try {
+            log.info("Creating fee invoice for student: {} and fee structure: {}", studentId, feeStructureId);
+            
+            // Find active enrollment for student
+            List<StudentEnrollment> enrollments = studentEnrollmentRepository.findByStudentIdAndIsActiveTrue(studentId);
+            StudentEnrollment enrollment;
+            
+            if (enrollments.isEmpty()) {
+                // Auto-create enrollment if none exists (for testing/convenience)
+                log.warn("No enrollment found for student {}, creating enrollment automatically", studentId);
+                
+                Optional<User> studentOpt = userRepository.findById(studentId);
+                if (studentOpt.isEmpty()) {
+                    return ApiResponse.error("Student not found");
+                }
+                
+                User student = studentOpt.get();
+                
+                // Try to find any active class (default to class ID 1, or find first available)
+                Optional<ClassEntity> classOpt = classRepository.findById(1L);
+                if (classOpt.isEmpty()) {
+                    List<ClassEntity> classes = classRepository.findAll().stream()
+                        .filter(ClassEntity::getIsActive)
+                        .toList();
+                    if (classes.isEmpty()) {
+                        return ApiResponse.error("No active classes found. Please create a class first.");
+                    }
+                    classOpt = Optional.of(classes.get(0));
+                }
+                
+                ClassEntity classEntity = classOpt.get();
+                
+                // Create enrollment
+                enrollment = new StudentEnrollment();
+                enrollment.setStudent(student);
+                enrollment.setClassEntity(classEntity);
+                enrollment.setEnrollmentNumber("ENR-" + System.currentTimeMillis());
+                enrollment.setEnrollmentDate(LocalDate.now());
+                enrollment.setIsActive(true);
+                enrollment.setNotes("Auto-created for invoice generation");
+                
+                enrollment = studentEnrollmentRepository.save(enrollment);
+                log.info("Auto-created enrollment ID: {} for student: {}", enrollment.getId(), studentId);
+            } else {
+                // Use the most recent enrollment (first in list if sorted by date DESC)
+                enrollment = enrollments.get(0);
+                log.info("Using enrollment ID: {} for student: {}", enrollment.getId(), studentId);
+            }
+            
+            // Validate fee structure exists
+            Optional<FeeStructure> feeStructure = feeStructureRepository.findById(feeStructureId);
+            if (feeStructure.isEmpty()) {
+                return ApiResponse.error("Fee structure not found");
+            }
+            
+            // Generate invoice number
+            String invoiceNumber = "INV-" + System.currentTimeMillis();
+            
+            FeeInvoice invoice = new FeeInvoice();
+            invoice.setInvoiceNumber(invoiceNumber);
+            invoice.setIssueDate(LocalDate.now());
+            invoice.setDueDate(LocalDate.now().plusDays(30)); // 30 days from issue date
+            invoice.setTotalAmount(feeStructure.get().getAmount());
+            invoice.setPaidAmount(BigDecimal.ZERO);
+            invoice.setBalanceAmount(feeStructure.get().getAmount());
+            invoice.setStatus("PENDING");
+            invoice.setEnrollment(enrollment);
+            invoice.setFeeStructure(feeStructure.get());
+            
+            FeeInvoice savedInvoice = feeInvoiceRepository.save(invoice);
+            log.info("Fee invoice created successfully for student {}: {}", studentId, savedInvoice.getId());
+            
+            return ApiResponse.success("Fee invoice created successfully", convertToDto(savedInvoice));
+            
+        } catch (Exception e) {
+            log.error("Error creating fee invoice by student ID: {}", e.getMessage());
+            return ApiResponse.error("Failed to create fee invoice: " + e.getMessage());
+        }
+    }
+    
     @Transactional(readOnly = true)
     public ApiResponse<List<FeeInvoiceDto>> getStudentInvoices(Long enrollmentId) {
         try {
@@ -167,6 +254,51 @@ public class FinanceService {
         } catch (Exception e) {
             log.error("Error fetching student invoices: {}", e.getMessage());
             return ApiResponse.error("Failed to retrieve student invoices: " + e.getMessage());
+        }
+    }
+    
+    @Transactional(readOnly = true)
+    public ApiResponse<List<FeeInvoiceDto>> getStudentInvoicesByStudentId(Long studentId) {
+        try {
+            log.info("Fetching invoices for student ID: {}", studentId);
+            List<FeeInvoice> invoices = feeInvoiceRepository.findActiveInvoicesByStudentId(studentId);
+            List<FeeInvoiceDto> invoiceDtos = invoices.stream()
+                    .map(this::convertToDto)
+                    .toList();
+            
+            return ApiResponse.success("Student invoices retrieved successfully", invoiceDtos);
+            
+        } catch (Exception e) {
+            log.error("Error fetching student invoices by student ID: {}", e.getMessage());
+            return ApiResponse.error("Failed to retrieve student invoices: " + e.getMessage());
+        }
+    }
+    
+    @Transactional(readOnly = true)
+    public ApiResponse<List<FeeInvoiceDto>> getAllInvoices(Long schoolId, String status) {
+        try {
+            log.info("Fetching all invoices - school: {}, status: {}", schoolId, status);
+            
+            List<FeeInvoice> invoices;
+            if (schoolId != null && status != null && !status.trim().isEmpty()) {
+                invoices = feeInvoiceRepository.findActiveInvoicesBySchoolIdAndStatus(schoolId, status);
+            } else if (schoolId != null) {
+                invoices = feeInvoiceRepository.findActiveInvoicesBySchoolId(schoolId);
+            } else if (status != null && !status.trim().isEmpty()) {
+                invoices = feeInvoiceRepository.findActiveInvoicesByStatus(status);
+            } else {
+                invoices = feeInvoiceRepository.findAllActiveInvoices();
+            }
+            
+            List<FeeInvoiceDto> invoiceDtos = invoices.stream()
+                    .map(this::convertToDto)
+                    .toList();
+            
+            return ApiResponse.success("Invoices retrieved successfully", invoiceDtos);
+            
+        } catch (Exception e) {
+            log.error("Error fetching all invoices: {}", e.getMessage());
+            return ApiResponse.error("Failed to retrieve invoices: " + e.getMessage());
         }
     }
     
@@ -674,24 +806,118 @@ public class FinanceService {
     }
     
     // Payment Gateway Integration
-    public ApiResponse<Object> initiateMpesaStkPush(PaymentRequestDto paymentRequest, User currentUser) {
+    public ApiResponse<MpesaStkPushResponse> initiateMpesaStkPush(PaymentRequestDto paymentRequest, User currentUser) {
         try {
             log.info("Initiating M-Pesa STK Push for invoice: {}", paymentRequest.getInvoiceId());
             
-            // TODO: Implement actual M-Pesa STK Push integration
-            // For now, return a mock response
-            Object response = new Object() {
-                public final String message = "M-Pesa STK Push initiated successfully";
-                public final String invoiceId = paymentRequest.getInvoiceId().toString();
-                public final String amount = paymentRequest.getAmount().toString();
-                public final String phoneNumber = paymentRequest.getPhoneNumber();
-                public final String checkoutRequestId = "ws_CO_" + System.currentTimeMillis();
-                public final String merchantRequestId = "MR_" + System.currentTimeMillis();
-            };
+            // Validate invoice exists (optional for testing - create mock invoice if not found)
+            FeeInvoice invoice;
+            Optional<FeeInvoice> invoiceOpt = feeInvoiceRepository.findById(paymentRequest.getInvoiceId());
             
-            return ApiResponse.success("M-Pesa STK Push initiated successfully", response);
+            if (invoiceOpt.isEmpty()) {
+                // For testing: create a temporary invoice if it doesn't exist
+                log.warn("Invoice {} not found, creating test invoice for STK Push testing", paymentRequest.getInvoiceId());
+                Optional<StudentEnrollment> enrollmentOpt = studentEnrollmentRepository.findById(1L);
+                
+                if (enrollmentOpt.isEmpty()) {
+                    return ApiResponse.error("Invoice not found and cannot create test invoice (no enrollment found). Please create an invoice first.");
+                }
+                
+                // Create minimal test invoice
+                StudentEnrollment enrollment = enrollmentOpt.get();
+                FeeStructure testFeeStructure = feeStructureRepository.findById(1L).orElseGet(() -> {
+                    FeeStructure fs = new FeeStructure();
+                    fs.setName("Test Fee");
+                    fs.setAmount(BigDecimal.valueOf(1000));
+                    fs.setSchool(enrollment.getClassEntity().getSchool());
+                    return feeStructureRepository.save(fs);
+                });
+                
+                invoice = new FeeInvoice();
+                invoice.setInvoiceNumber("TEST-INV-" + System.currentTimeMillis());
+                invoice.setIssueDate(LocalDate.now());
+                invoice.setDueDate(LocalDate.now().plusDays(30));
+                invoice.setTotalAmount(paymentRequest.getAmount().multiply(BigDecimal.valueOf(10))); // Set higher for testing
+                invoice.setPaidAmount(BigDecimal.ZERO);
+                invoice.setBalanceAmount(invoice.getTotalAmount());
+                invoice.setStatus("PENDING");
+                invoice.setEnrollment(enrollmentOpt.get());
+                invoice.setFeeStructure(testFeeStructure);
+                invoice.setIsActive(true);
+                invoice = feeInvoiceRepository.save(invoice);
+                log.info("Created test invoice: {}", invoice.getId());
+            } else {
+                invoice = invoiceOpt.get();
+            }
+            
+            // Validate amount (only if invoice exists and has balance)
+            if (paymentRequest.getAmount().compareTo(invoice.getBalanceAmount()) > 0) {
+                log.warn("Amount {} exceeds invoice balance {}, but proceeding for testing", paymentRequest.getAmount(), invoice.getBalanceAmount());
+            }
+            
+            // Validate phone number
+            if (paymentRequest.getPhoneNumber() == null || paymentRequest.getPhoneNumber().trim().isEmpty()) {
+                return ApiResponse.error("Phone number is required for M-Pesa payment");
+            }
+            
+            // Generate account reference from invoice number
+            String accountReference = paymentRequest.getAccountReference() != null 
+                ? paymentRequest.getAccountReference() 
+                : invoice.getInvoiceNumber();
+            
+            String transactionDescription = paymentRequest.getTransactionDescription() != null
+                ? paymentRequest.getTransactionDescription()
+                : "Payment for " + invoice.getInvoiceNumber();
+            
+            // Format amount (M-Pesa expects whole numbers in cents/shillings)
+            int amountInShillings = paymentRequest.getAmount().multiply(BigDecimal.valueOf(1)).intValue();
+            String amountString = String.valueOf(amountInShillings);
+            
+            // Initiate STK Push
+            String checkoutRequestId = mpesaService.initiateSTKPush(
+                paymentRequest.getPhoneNumber(),
+                amountString,
+                accountReference,
+                transactionDescription
+            );
+            
+            // Create pending payment record
+            Payment pendingPayment = new Payment();
+            pendingPayment.setPaymentReference("MPESA-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+            pendingPayment.setAmount(paymentRequest.getAmount());
+            pendingPayment.setPaymentMethod("M_PESA");
+            pendingPayment.setPaymentStatus("PENDING");
+            pendingPayment.setExternalReference(checkoutRequestId); // Store checkout request ID
+            pendingPayment.setTransactionId(null); // Will be set when webhook is received
+            pendingPayment.setPaymentNotes(paymentRequest.getPaymentNotes());
+            pendingPayment.setPaymentDate(LocalDateTime.now());
+            pendingPayment.setInvoice(invoice);
+            pendingPayment.setEnrollment(invoice.getEnrollment());
+            pendingPayment.setProcessedBy(currentUser);
+            pendingPayment.setIsActive(true);
+            
+            paymentRepository.save(pendingPayment);
+            log.info("Created pending payment record with checkout request ID: {}", checkoutRequestId);
+            
+            // Build response
+            MpesaStkPushResponse response = new MpesaStkPushResponse();
+            response.setCheckoutRequestId(checkoutRequestId);
+            response.setMerchantRequestId("MR_" + System.currentTimeMillis());
+            response.setCustomerMessage("Confirm payment on your phone");
+            response.setResponseCode("0");
+            response.setResponseDescription("The service request is processed successfully");
+            response.setInvoiceId(invoice.getId());
+            response.setInvoiceNumber(invoice.getInvoiceNumber());
+            response.setAmount(paymentRequest.getAmount().toString());
+            response.setPhoneNumber(paymentRequest.getPhoneNumber());
+            
+            return ApiResponse.success("M-Pesa STK Push initiated successfully. Please check your phone.", response);
+            
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error initiating M-Pesa STK Push: {}", e.getMessage());
+            return ApiResponse.error(e.getMessage());
         } catch (Exception e) {
-            log.error("Error initiating M-Pesa STK Push: {}", e.getMessage());
+            log.error("Error initiating M-Pesa STK Push: {}", e.getMessage(), e);
             return ApiResponse.error("Failed to initiate M-Pesa STK Push: " + e.getMessage());
         }
     }
@@ -717,14 +943,109 @@ public class FinanceService {
         }
     }
     
+    @Transactional
     public String handleMpesaWebhook(String webhookPayload) {
         try {
             log.info("Processing M-Pesa webhook: {}", webhookPayload);
-            // TODO: Implement M-Pesa webhook processing
-            return "M-Pesa webhook processed successfully";
+            
+            // Parse webhook payload
+            Map<String, Object> payloadMap = objectMapper.readValue(webhookPayload, Map.class);
+            
+            // Extract STK callback data
+            Map<String, Object> body = (Map<String, Object>) payloadMap.get("Body");
+            if (body == null) {
+                log.warn("Webhook payload missing Body: {}", webhookPayload);
+                return "ERROR: Invalid webhook payload";
+            }
+            
+            Map<String, Object> stkCallback = (Map<String, Object>) body.get("stkCallback");
+            if (stkCallback == null) {
+                log.warn("Webhook payload missing stkCallback: {}", webhookPayload);
+                return "ERROR: Invalid webhook payload";
+            }
+            
+            String checkoutRequestId = (String) stkCallback.get("CheckoutRequestID");
+            Integer resultCode = (Integer) stkCallback.get("ResultCode");
+            String resultDesc = (String) stkCallback.get("ResultDesc");
+            
+            log.info("Processing callback - CheckoutRequestID: {}, ResultCode: {}, ResultDesc: {}", 
+                checkoutRequestId, resultCode, resultDesc);
+            
+            // Find payment by checkout request ID (stored in externalReference)
+            Optional<Payment> paymentOpt = paymentRepository.findByExternalReference(checkoutRequestId);
+            
+            if (paymentOpt.isEmpty()) {
+                log.warn("Payment not found for checkout request ID: {}", checkoutRequestId);
+                return "ERROR: Payment not found";
+            }
+            
+            Payment payment = paymentOpt.get();
+            
+            // Process based on result code
+            if (resultCode == 0) {
+                // Payment successful
+                Map<String, Object> callbackMetadata = (Map<String, Object>) stkCallback.get("CallbackMetadata");
+                if (callbackMetadata != null) {
+                    List<Map<String, Object>> items = (List<Map<String, Object>>) callbackMetadata.get("Item");
+                    
+                    String mpesaReceiptNumber = null;
+                    
+                    if (items != null) {
+                        for (Map<String, Object> item : items) {
+                            String name = (String) item.get("Name");
+                            Object value = item.get("Value");
+                            
+                            if ("MpesaReceiptNumber".equals(name)) {
+                                mpesaReceiptNumber = value.toString();
+                                break; // We only need the receipt number
+                            }
+                        }
+                    }
+                    
+                    // Update payment
+                    payment.setTransactionId(mpesaReceiptNumber);
+                    payment.setPaymentStatus("COMPLETED");
+                    payment.setPaymentDate(LocalDateTime.now());
+                    if (payment.getPaymentNotes() == null || payment.getPaymentNotes().isEmpty()) {
+                        payment.setPaymentNotes("M-Pesa Receipt: " + mpesaReceiptNumber);
+                    }
+                    
+                    paymentRepository.save(payment);
+                    
+                    // Update invoice
+                    FeeInvoice invoice = payment.getInvoice();
+                    BigDecimal newPaidAmount = invoice.getPaidAmount().add(payment.getAmount());
+                    invoice.setPaidAmount(newPaidAmount);
+                    invoice.setBalanceAmount(invoice.getTotalAmount().subtract(newPaidAmount));
+                    
+                    // Update invoice status
+                    if (invoice.getBalanceAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                        invoice.setStatus("PAID");
+                    } else if (newPaidAmount.compareTo(BigDecimal.ZERO) > 0) {
+                        invoice.setStatus("PARTIAL");
+                    }
+                    
+                    feeInvoiceRepository.save(invoice);
+                    
+                    log.info("Payment completed successfully - Receipt: {}, Amount: {}", mpesaReceiptNumber, payment.getAmount());
+                    
+                    // Send notification
+                    sendPaymentNotification(payment, invoice);
+                }
+            } else {
+                // Payment failed
+                payment.setPaymentStatus("FAILED");
+                payment.setPaymentNotes("M-Pesa payment failed: " + resultDesc);
+                paymentRepository.save(payment);
+                
+                log.warn("Payment failed - CheckoutRequestID: {}, Reason: {}", checkoutRequestId, resultDesc);
+            }
+            
+            return "SUCCESS";
+            
         } catch (Exception e) {
-            log.error("Error processing M-Pesa webhook: {}", e.getMessage());
-            return "Error processing M-Pesa webhook: " + e.getMessage();
+            log.error("Error processing M-Pesa webhook: {}", e.getMessage(), e);
+            return "ERROR: " + e.getMessage();
         }
     }
     

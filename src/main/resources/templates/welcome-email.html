@@ -1,16 +1,110 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to School Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .welcome-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .role-badge {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .footer {
+            background-color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        /* Responsive styles for mobile */
+        @media only screen and (max-width: 600px) {
+            body {
+                padding: 10px !important;
+            }
+            .header {
+                padding: 20px 15px !important;
+            }
+            .header h1 {
+                font-size: 22px !important;
+            }
+            .content {
+                padding: 20px 15px !important;
+            }
+            .welcome-icon {
+                font-size: 36px !important;
+            }
+            .role-badge {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to School Management System!</h1>
-    <p>Dear <span th:text="${name}">User</span>,</p>
-    <p>Welcome to our School Management System! You have been registered as a <span th:text="${role}">User</span>.</p>
-    <p>We are excited to have you on board.</p>
-    <p>Best regards,<br>School Management Team</p>
-    <p><small>This email was sent from <span th:text="${fromEmail}">noreply@school.com</span></small></p>
+    <div class="container">
+        <div class="header">
+            <div class="welcome-icon">🎓</div>
+            <h1>Welcome to School Management System!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Dear <strong th:text="${name}">User</strong>,</p>
+            
+            <p>Welcome to our School Management System! You have been successfully registered and your account is now active.</p>
+            
+            <p style="text-align: center; margin: 20px 0;">
+                <span class="role-badge" th:text="${role}">User</span>
+            </p>
+            
+            <p>You now have access to all the features available to your role. We are excited to have you on board and look forward to working with you.</p>
+            
+            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            
+            <p style="margin-top: 30px;">Best regards,<br><strong>School Management Team</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>This email was sent from <span th:text="${fromEmail}">noreply@school.com</span></p>
+            <p>© 2025 School Management System. All rights reserved.</p>
+        </div>
+    </div>
 </body>
 </html>
 

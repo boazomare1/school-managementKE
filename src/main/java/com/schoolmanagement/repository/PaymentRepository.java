@@ -28,6 +28,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     
     @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.enrollment.id = :enrollmentId AND p.paymentStatus = 'COMPLETED' AND p.isActive = true")
     java.math.BigDecimal getTotalPaidAmountByEnrollment(Long enrollmentId);
+    
+    Optional<Payment> findByExternalReference(String externalReference);
 }
 
 
